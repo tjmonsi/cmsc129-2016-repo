@@ -261,3 +261,44 @@ S -> Aa | b
 A -> bdA' | eA'
 A' -> adA' | cA' | e
 ```
+
+### Left-Factoring
+
+Left factoring is transforms grammar rule set into something that is suitable for top-down/predictive parsing.
+
+Given an A-production like this:
+
+```
+stmt -> if then stmt else stmt
+     -> if then stmt
+```
+
+We can re-write it to do this
+
+```
+stmt      -> if then stmt else_stmt 
+else_stmt -> else stmt | e
+```
+
+In essence, you try to find the common prefix in the original production list and create another production list for the suffix.
+
+```
+A -> aB1 | aB2
+```
+
+becomes...
+
+```
+A  -> aB'
+B' -> B1 | B2
+```
+
+### Top-down Parsing
+
+Top-down parsing is finding a parse tree reading an array of tokens coming from the left and starting from the root of your grammar rule set. 
+
+In a sense, it is finding the left-most derivation of your lexemes.
+
+#### TO DO and TO FOLLOW
+
+The step by step of an example top-down parsing
