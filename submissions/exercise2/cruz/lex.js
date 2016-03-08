@@ -2,6 +2,8 @@
 //http://stackoverflow.com/questions/4351521/how-do-i-pass-command-line-arguments-to-node-js
 //https://nodejs.org/docs/latest/api/fs.html
 
+//[Rev 1] - Fixed "/' ambiguity
+
 /*
 	Content Tree:
 	Classes
@@ -131,27 +133,46 @@ function compile(){
 
 	//String generation (gathers "[<words>,<numbers>,<symbols>]")
 	var cstring = new State(null,false);
+	var cstring2 = new State(null,false);
 	sStart.next["\'"].accept = false;
 	sStart.next["\""].accept = false; 
+	cstring.next["\'"] = new State("\'",false);
+	cstring2.next["\""] = new State("\"",false);
+	cstring.next["\""] = new State("\"",true);
+	cstring2.next["\'"] = new State("\'",true);
+	cstring2.next["\""] = new State("\"",false);
+	sStart.next["\""].addNext(cstring.next["\'"]);
+	sStart.next["\'"].addNext(cstring2.next["\""]);
+	cstring.next["\'"].addNext(cstring.next["\'"]);
+	cstring.next["\'"].addNext(cstring.next["\""]);
+	cstring2.next["\""].addNext(cstring2.next["\'"]);
+	cstring2.next["\""].addNext(cstring2.next["\""]);
 	for (var i = 32; i <= 126; i++) {
-		if(i == 34 || i == 39)
+		if(i == 34 || i == 39 || i == 92)
 			continue;
 		cstring.next[String.fromCharCode(i)] = new State(String.fromCharCode(i),false);
+		cstring2.next[String.fromCharCode(i)] = new State(String.fromCharCode(i),false);
 		sStart.next["\""].addNext(cstring.next[String.fromCharCode(i)]);
-		sStart.next["\'"].addNext(cstring.next[String.fromCharCode(i)]);
+		sStart.next["\'"].addNext(cstring2.next[String.fromCharCode(i)]);
 		cstring.next[String.fromCharCode(i)].addNext(new State("\"",true));
-		cstring.next[String.fromCharCode(i)].addNext(new State("\'",true));
+		cstring.next[String.fromCharCode(i)].addNext(cstring.next["\'"]);
+		cstring.next["\'"].addNext(String.fromCharCode(i));
+		cstring2.next[String.fromCharCode(i)].addNext(new State("\'",true));
+		cstring2.next[String.fromCharCode(i)].addNext(cstring2.next["\""]);
+		cstring2.next["\""].addNext(String.fromCharCode(i));
 	}
 	sStart.next["\""].addNext(new State("\"",true));
 	sStart.next["\'"].addNext(new State("\'",true));
-		
+	var esc = new State("\\",false);
+
 	for (var i = 32; i <= 126; i++) {
-		if(i == 34 || i == 39)
+		if(i == 34 || i == 39 || i == 92)
 			continue;
 		for (var j = 32; j <= 126; j++) {
-			if(j == 34 || j == 39)
+			if(j == 34 || j == 39 || j == 92)
 				continue;
 			cstring.next[String.fromCharCode(i)].addNext(cstring.next[String.fromCharCode(j)]);
+			cstring2.next[String.fromCharCode(i)].addNext(cstring2.next[String.fromCharCode(j)]);
 		}
 	}
 	
