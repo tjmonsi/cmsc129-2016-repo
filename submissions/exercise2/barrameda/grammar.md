@@ -55,8 +55,43 @@ Literals
 <stringOp>:= (<concat>|<substring>|<length>)
 <operand>:= (<varident>|<expression>)
 <codeblock>:= (<expression>|<expression><codeblock>)
-
 ```
 	
 #Production List
+```
+<vardec>:= new <varident>
+	:= new <assign>
+<arrayDec>:= new <varident>[<numbers>]
 
+<output>:= print(<expression>)
+<input>:= scan(<varident>, <strings>)
+
+<multiply>:= <operand><symbol><operand>
+<divide>:= <operand><symbol><operand>
+<modulo>:= <operand><symbol><operand>
+<add>:= <operand><symbol><operand>
+<subtract>:= <operand><symbol><operand>
+
+<and>:= <operand><symbol><operand>
+<or>:= <operand><symbol><operand>
+<lessThan>:= <operand><symbol><operand>
+<greaterThan>:= <operand><symbol><operand>
+<equal>:= <operand><symbol><operand>
+<lessOrEqual>:= <operand><symbol><operand>
+<greaterOrEqual>:= <operand><symbol><operand>
+
+<substring>:= splice((<strings>|<varident>), <numbers>, <numbers>)
+<concat>:= concat(<operand>, <operand>)
+<length>:= len(<strings>|<operand>)
+
+<functionDec>:= func <varident>(E|<varident>) {<codeblock> return}
+<functionCall>:= call <varident>(E|<varident>|<expression>)
+
+<if-then>:= 	if(<booleanOp>) {<codeblock>}
+		elsif(<booleanOp>) {<codeblock>}
+		else {<codeblock>}
+		
+<for-loop>:= for(<assign>; <booleanOp>; <assign>) {<codeblock>}
+<while-loop>:= while(<booleanOp>) {<codeblock>}
+<do-while-loop>:= do{<codeblock>} while(<booleanOp) 
+```
