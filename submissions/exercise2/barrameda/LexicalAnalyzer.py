@@ -77,6 +77,8 @@ def initDFA():
 	dfa.addBranch(keywordTF('while', dfa))
 	dfa.addBranch(keywordTF('do', dfa))
 	dfa.addBranch(keywordTF('not', dfa))
+	dfa.addBranch(keywordTF('and', dfa))
+	dfa.addBranch(keywordTF('or', dfa))
 	dfa.addBranch(keywordTF('true', dfa))
 	dfa.addBranch(keywordTF('false', dfa))
 	dfa.addBranch(keywordTF('(', dfa))
