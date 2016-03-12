@@ -96,6 +96,10 @@ def initDFA():
 	dfa.addBranch(keywordTF('==', dfa))
 	dfa.addBranch(keywordTF('<=', dfa))
 	dfa.addBranch(keywordTF('>=', dfa))
+	dfa.addBranch(keywordTF('//', dfa))
+	dfa.addBranch(keywordTF('/*', dfa))
+	dfa.addBranch(keywordTF('*/', dfa))
+	dfa.addBranch(keywordTF('_i', dfa))
 	
 	#Variable Identifier
 	tf = dict()
