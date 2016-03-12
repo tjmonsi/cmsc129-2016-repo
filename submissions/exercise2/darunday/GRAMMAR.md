@@ -91,7 +91,7 @@ fn main(){
 }
 ```
 
-	``` rust
+``` rust
 fn fib(n) -> Decimal: if(n<=2) 1 else fib(n-1) + fib(n-2)
-	fn main(): print(fib(10));
-	```
+fn main(): print(fib(10));
+```
