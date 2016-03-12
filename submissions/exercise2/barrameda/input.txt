@@ -1,6 +1,8 @@
-new $out;
-new !x = 1;
+new $out
+new !x = 1
 
-$out = "Hello World!";
-print(!x);
-print($out);
+$out = "Hello World!"
+print(!x)
+print($out)
+
+
