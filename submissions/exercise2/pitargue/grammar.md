@@ -1,7 +1,7 @@
 #TERMINALS
 ```
 identifier := [a-zA-Z][a-zA-Z0-9_]*
-number := -?[0-9]*\.?[0-9]+
+number := -?[0-9]*\(.[0-9]+)?
 string := ".*"
 break
 continue
@@ -13,6 +13,7 @@ elsif
 else
 switch
 case
+default
 while
 do
 for
@@ -23,14 +24,14 @@ return
 true
 false
 
-( ) { } [ ] ; , ? : + - * / % && || ! == > < >= <=
+( ) { } [ ] ; , ? : + - * / % = && || ! == != > < >= <= @ @@ ++ --
 ```
 
 #NONTERMINALS & PRODUCTION RULES
 ```
 CODEBLOCK := STATEMENT; | STATEMENT; CODEBLOCK
 STATEMENT := EXPRESSION | VARDEC | INPUT | OUTPUT | COMMENT | MULTILINECOMMENTT | IFSTMT | SWITCHSTMT | LOOPSTMT | FUNCTIONDEC | RETURN | INCREMENT | DECREMENT | break | continue
-EXPRESSION := VARASSIGN | ARRAYASSIGN | MATH | BOOLEAN | STRING | CONSTANT | TERNARY
+EXPRESSION := VARASSIGN | ARRAYASSIGN | MATH | BOOLEAN | STRING | CONSTANT | TERNARY | identifier
 MATH := ADDITION | SUBTRACTION | MULTIPLICATION | DIVISION | MODULO
 BOOLEAN := AND | OR | NEGATE | EQUAL | GREATERTHAN | LESSTHAN
 STRING := SUBSTR | CONCAT | STRLEN
@@ -49,7 +50,7 @@ ELSEBLOCK := elsif(EXPRESSION) { CODEBLOCK } ELSEBLOCK | else { CODEBLOCK }
 SWITCHSTMT := switch(EXPRESSION) { CASEBLOCK }
 CASEBLOCK := case CONSTANT { CODEBLOCK } CASEBLOCK | case CONSTANT { CODEBLOCK } | default { CODEBLOCK }
 
-LOOPSTMT := while(EXPRESSION) { CODEBLOCK } | do { CODEBLOCK } while(EXPRESSION) | for(EXPRESSION; EXPRESSION; EXPRESSION) { CODEBLOCK } | foreach(identifier in identifier) { CODEBLOCK }
+LOOPSTMT := while(EXPRESSION) { CODEBLOCK } | do { CODEBLOCK } while(EXPRESSION) | for(EXPRESSION; EXPRESSION; EXPRESSION) { CODEBLOCK } | foreach(identifier in EXPRESSION) { CODEBLOCK }
 
 FUNCTIONDEC := def identifier = function(FUNCTIONPARAMS) { CODEBLOCK } | def identifier = function() { CODEBLOCK }
 FUNCTIONPARAMS := identifier, FUNCTIONPARAMS | identifier
