@@ -1,0 +1,6 @@
+[package]
+name = "river-lexer"
+version = "0.1.0"
+authors = ["Keith Certeza Darunday <jkcdarunday@gmail.com>"]
+
+[dependencies]
