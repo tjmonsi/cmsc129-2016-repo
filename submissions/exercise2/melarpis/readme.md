@@ -18,9 +18,9 @@ $ cargo build lexer
 ```
 **Sample Run**
 ```bash
-$ cargo run lexer _<filename.fl>_
+$ cargo run lexer <filename.fl>
 ```
 _OR_ 
 ```bash
-$./lexer/src/main/lexer _<filename.fl>_
+$./lexer/src/main/lexer <filename.fl>
 ```
