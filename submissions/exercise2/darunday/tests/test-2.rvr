@@ -1,0 +1,4 @@
+fn main(){
+    let arr: Decimal = [10];
+    for i in 1..10 print(arr[i-1]);
+}
