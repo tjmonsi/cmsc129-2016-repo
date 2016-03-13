@@ -23,7 +23,7 @@ return
 true
 false
 
-( ) { } [ ] ; , ? : + - * / % && || == > < >= <=
+( ) { } [ ] ; , ? : + - * / % && || ! == > < >= <=
 ```
 
 #NONTERMINALS & PRODUCTION RULES
