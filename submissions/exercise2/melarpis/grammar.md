@@ -15,7 +15,7 @@ ambiguity.
 
 ----------
 
-Terminals
+#Terminals
 -------------
 **Variables:**
 ```
@@ -52,7 +52,7 @@ false
 */
 ```
 
-Non-Terminals
+#Non-Terminals
 -------------
 ```
 vardec
