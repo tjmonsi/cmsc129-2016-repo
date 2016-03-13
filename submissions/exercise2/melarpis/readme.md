@@ -1,23 +1,26 @@
-Lexical Analyzer
+# Description
+The **lexer.rs** is a rust implementation of a lexical analyzer using Deterministic Finite-state Automata.
 ===================
 
-The **lex.js** is a javascript implementation of a lexical analyzer without using RegEx but with use of (Deterministic) Finite-state Automata implementation.
 
-----------
-
-
-Running the script
+#How To Run
 -------------
 
-> **Requirements:**
+**Requirements**
 
-> - Node.js
-> - A file with correct lexemes (a ".cjs" file)
+- rust ^1.7.0
+- cargo ^0.8.0
+- file with extension _.fl_
 
-**Node.js**
-
-To use, simply use the command below on the same directory as lex.js and <.cjs file>.
+**Build**
+```bash
+$ cargo build lexer
 ```
-node lex.js <.cjs file>
+**Sample Run**
+```bash
+$ cargo run lexer _<filename.fl>_
 ```
-The script will output the lexemes found on the file and will generate a "filename+ext.lex" file that contains the lexemes based on its analysis.
+> OR 
+```bash
+$./lexer/src/main/lexer _<filename.fl>_
+```
