@@ -605,7 +605,7 @@ def token_analyze(fa):
 
 def tokengenerator(filename):
     "This function generates a token list for a source code based on the grammar at grammar.md"
-    fa =  loadfile(filename)
+    fa =  DFA.loadfile(filename)
     token_analyze(fa)
     return 
 
