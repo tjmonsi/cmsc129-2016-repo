@@ -8,8 +8,8 @@
 
 **Requirements**
 
-- rust ^1.7.0
-- cargo ^0.8.0
+- [rust ^1.7.0](https://www.rust-lang.org/downloads.html)
+- [cargo ^0.8.0](http://doc.crates.io/)
 - file with extension _.fl_
 
 **Build**
