@@ -10,6 +10,7 @@ fn
 do
 while
 for
+in
 loop
 String
 Boolean
@@ -23,7 +24,7 @@ true false
 > < >= <= ==
 + - / *
 = ->
-{} () [] : ;
+{} () [] : .. ;
 ```
 
 ## Non-Terminal
@@ -40,6 +41,7 @@ BOOL
 ARIT
 FNPARAMS
 FUNC
+RANGE
 FOR
 DOWHILE
 WHILE
