@@ -1,0 +1,148 @@
+Grammar
+===================
+
+Non-Terminals
+-------------
+```
+	CODE
+	STMT
+	OUT
+	IN
+	ARITH
+	BOOL
+	STR
+	VARDEC
+	INIT
+	ARR
+	TYPE
+	FILE
+	FXN
+	RETURN
+	PARAM
+	FXNCALL
+	FCPARAM
+	LOOP	
+	COND
+	IF
+	ELSE
+	ELSIF
+	ACTION
+	VAR
+	STRING
+```
+
+Terminals
+-------------
+```
+	/number/
+	/alphabet/
+	/symbol/
+	/any/
+	simula
+	tapos
+	isulat
+	ikuha
+	plas
+	maynus
+	dibayd
+	multiplay
+	modyulo
+	at
+	o
+	hinde
+	masmalaki
+	masmaliit
+	parehas
+	hindeRehas
+	lakiRehas
+	liitRehas
+	truw
+	pols
+	haba
+	dugtong
+	numero
+	karakter
+	lutang
+	payl
+	panksyon
+	ibigay
+	habang
+	gawin
+	por
+	kung
+	kungHinde
+	eKung
+```	
+
+Production Rules
+-------------
+|/LHS/ | RHS|
+|-----|------|
+|CODE|simula:/STMT/tapos;|
+||ε|
+|STMT|/OUT/;/STMT/
+||/IN/;/STMT/
+||/ARITH/;/STMT/
+||/BOOL/;/STMT/
+||/STR/;/STMT/
+||/VARDEC/;/STMT/
+||/INIT/;/STMT/
+||/FILE/;/STMT/
+||/FXN/;/STMT/
+||/RETURN/;/STMT/
+||/LOOP/;/STMT/
+||/COND/;/STMT/
+||ε
+|OUT|isulat(/ACTION/)
+||isulat(/STRING/)
+|IN|ikuha(/VAR/)
+|ARITH|plas(/ACTION/,/ACTION/)
+||maynus(/ACTION/,/ACTION/)
+||dibayd(/ACTION/,/ACTION/)
+||multiplay(/ACTION/,/ACTION/)
+||modyulo(/ACTION/,/ACTION/)
+|BOOL|at(/BOOL/,/BOOL/)
+||o(/BOOL/,/BOOL/)
+||hinde(/BOOL/)
+||masmalaki(/ACTION/,/ACTION/)
+||masmaliit(/ACTION/,/ACTION/)
+||parehas(/ACTION/,/ACTION/)
+||hindeRehas(/ACTION/,/ACTION/)
+||lakiRehas(/ACTION/,/ACTION/)
+||liitRehas(/ACTION/,/ACTION/)
+||truw
+||pols
+|STR|haba(/VAR/)
+||dugtong(/VAR/,/VAR/)
+|VARDEC|/TYPE//VAR//ARR/
+||/TYPE//INIT/
+|INIT|/VAR//ARR/=/ACTION/
+|ARR|[/ACTION/]/ARR/
+||ε
+|TYPE|numero
+||karakter
+||lutang
+|FILE|payl(/STRING/)
+|FXN|panksyon /VAR/(/PARAM/):
+|RETURN|ibigay(/ACTION/)
+|PARAM|/TYPE//VAR//ARR/
+||/TYPE//VAR//ARR/,/PARAM/
+|FXNCALL|/VAR/(/FCPARAM/)
+|FCPARAM|/ACTION/
+||/ACTION/,/FCPARAM/
+|LOOP|habang(/BOOL/):/STMT/
+||gawin:/STMT/habang(/BOOL/)
+||por(/INIT/;/BOOL/;/ACTION/):/STMT/
+|COND|/IF/
+||/ELSE/
+|IF|kung(/BOOL/):/STMT/
+|ELSE|/IF//ELSIF/kungHinde(/BOOL/):/STMT/
+|ELSIF|eKung(/BOOL/):/STMT//ELSIF/
+||ε
+|ACTION|/FXNCALL/
+||/ARITH/
+||/VAR/
+||/number/
+|VAR|/alphabet/
+||/alphabet//ARRAY/
+|STRING|“/any/”

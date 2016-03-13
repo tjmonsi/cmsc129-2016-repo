@@ -1,0 +1,11 @@
+simula:
+	panksyon fiboFxn(numero n):
+		kung(parehas(n,0)):
+			ibigay(0);
+		eKung(parehas(n,1)):
+			ibigay(1);
+		kungHinde:
+			ibigay(plas(fiboFxn(maynus(n,1)),fiboFxn(maynus(n,2))));	
+
+	fiboFxn(5);						
+tapos;
