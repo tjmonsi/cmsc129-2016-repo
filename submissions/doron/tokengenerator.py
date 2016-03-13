@@ -473,14 +473,14 @@ class DFA:
     
     
     
-
+    @staticmethod
     def checknext(state, input_letter):
         foundstate = False
         for states in state.next_state:
                 #SPACE/WHITESPACE TESTING
                 if states.name == "Q2"  or states.name == "Q6" or states.name == "Q10" or states.name == "Q15" or states.name == "Q21" or states.name == "Q25" or states.name == "Q31" or states.name == "QNEG" or states.name == "Q36" or states.name == "Q41" or states.name == "Q44" or states.name == "Q48" or states.name == "Q52" or states.name == "Q57" or states.name == "Q60" or states.name == "Q64" or states.name == "Q68" or states.name == "Q70" or states.name == "Q73" or states.name == "Q81" or states.name == "Q91" or states.name == "Q97" or states.name == "Q98" or states.name == "Q101" or states.name == "Q102":  
                     if input_letter.isspace():
-                      #  print("FOUND NEXT STATE BLANK")
+                        print("FOUND NEXT STATE BLANK")
                         foundstate = True
                         state = states
                         
@@ -490,26 +490,26 @@ class DFA:
                        # print (letters)
                         if(letters == input_letter):
                             foundstate = True
-                            #print("FOUND NEXT STATE")
+                            print("FOUND NEXT STATE")
                             state = states
         if foundstate == False:
             state = None
         return state
-        
+    @staticmethod
     def testinput(inputstr):
-        #print("INPUT TO TEST", inputstr)
+        print("INPUT TO TEST", inputstr)
         state = DFA.q0
         startindex = 0
         currindex = 0
         for letter in inputstr:
-            #print("Current State:",state.name)
-            #print("Letter to test:",letter)
+            print("Current State:",state.name)
+            print("Letter to test:",letter)
             state = DFA.checknext(state, letter)
             if state == None:
-              #  print("Unrecognized Character. Exiting")
+                print("Unrecognized Character. Exiting")
                 return
             if state.accept_state == True:
-                #print("END STATE", state.accept_num)
+                print("END STATE", state.accept_num)
                 tempstr = inputstr[startindex:currindex+1]
                 DFA.addtoken(state.accept_num, tempstr)
                 startindex = currindex+1
@@ -517,7 +517,8 @@ class DFA:
                
             currindex = currindex + 1
         DFA.printtokenlist()
-    
+        
+    @staticmethod
     def addtoken(accept_num, tokenval):
         if(accept_num != -1):
             
@@ -577,7 +578,7 @@ class DFA:
                 DFA.tokenlist.append(DFA("=", None))
             if(accept_num == 28):
                 DFA.tokenlist.append(DFA("int", None))
-                
+    @staticmethod           
     def printtokenlist():
         table=[]
         
@@ -606,7 +607,7 @@ def token_analyze(fa):
 def tokengenerator(filename):
     "This function generates a token list for a source code based on the grammar at grammar.md"
     fa =  loadfile(filename)
-    DFA.token_analyze(fa)
+    token_analyze(fa)
     return 
 
 
