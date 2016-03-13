@@ -29,3 +29,19 @@ Use cargo to run the compiled executable:
 ``` sh
 cargo run <source file>.rvr
 ```
+
+## Testing
+
+Test files can be found inside the `tests/` directory. These test files are the same as the sample code in the GRAMMAR.md file.
+
+## Release
+
+Executable can be build without debug symbols with:
+``` sh
+cargo build --release
+```
+
+Release executable can be run with:
+``` sh
+cargo run --release -- <source file>.rvr
+```
