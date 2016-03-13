@@ -144,15 +144,28 @@ obj
 
 ## Example Codes
 **hello_world.fl :**
-	out("Hello World\n", output.txt);
+---------------------
+    ```
+    fn main() {
+    	out("Hello World\n", output.txt);
+    }
+    ```
 **one_to_ten.fl:**
-        for(let i = 1; i <= 10; i++) {
-                out(concat(i, "\n"), output.txt);
-        }
+---------------------
+    ```
+    fn main() {
+    	for(let i = 1; i <= 10; i++) {
+        	out(i, output.txt);
+    	}
+    }
+    ```
 **fibonacci.fl:**
-        fn fibonacci(n) {
-                if(n <= 2) {
-                        return 1;
-                } 
-                fibonacci(n - 1) + fibonacci(n - 2)
-        }
+---------------------
+    ```
+    fn fibonacci(n) {
+        if(n <= 2) {
+            return 1;
+        } 
+        fibonacci(n - 1) + fibonacci(n - 2)
+    }
+    ```
