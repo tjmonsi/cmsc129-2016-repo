@@ -15,7 +15,7 @@ multirust update
 
 Build using cargo:
 ``` sh
-cargo build --release
+cargo build
 ```
 
 Or build the debug binary using cargo:
@@ -27,5 +27,5 @@ cargo build
 
 Use cargo to run the compiled executable:
 ``` sh
-cargo run --release -- <source file>.rvr
+cargo run <source file>.rvr
 ```
