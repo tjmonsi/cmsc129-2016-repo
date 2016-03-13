@@ -26,7 +26,7 @@ false
 ( ) { } [ ] ; , ? : + - * / % && || == > < >= <=
 ```
 
-#NONTERMINALS
+#NONTERMINALS & PRODUCTION RULES
 ```
 CODEBLOCK := STATEMENT; | STATEMENT; CODEBLOCK
 STATEMENT := EXPRESSION | VARDEC | INPUT | OUTPUT | COMMENT | MULTILINECOMMENTT | IFSTMT | SWITCHSTMT | LOOPSTMT | FUNCTIONDEC | RETURN | INCREMENT | DECREMENT | break | continue
@@ -37,7 +37,7 @@ STRING := SUBSTR | CONCAT | STRLEN
 
 VARDEC := def identifier | def VARASSIGN | def ARRAYASSIGN
 
-INPUT := input(identifier, string)
+INPUT := input(identifier, string) | input(identifier)
 OUTPUT := output(EXPRESSION)
 
 COMMENT := @.*
