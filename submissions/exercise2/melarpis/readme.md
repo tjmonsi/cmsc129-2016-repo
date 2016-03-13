@@ -14,6 +14,7 @@
 
 **Build**
 ```bash
+$ cargo update
 $ cargo build lexer
 ```
 **Sample Run**
