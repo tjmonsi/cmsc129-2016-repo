@@ -10,8 +10,10 @@ is already written left recursively to avoid
 ambiguity.
 
 # Contents
-- [Terminals](#Terminals)
-- [Non-Terminals](#Non-Terminals)
+- [Terminals](#terminals)
+- [Non-Terminals](#non-terminals)
+- [Production Rules](#production-rules)
+- [Example Codes](#example-codes)
 
 ----------
 
