@@ -23,5 +23,5 @@ $ cargo run lexer <filename.fl>
 ```
 _OR_ 
 ```bash
-$./lexer/src/main/lexer <filename.fl>
+$ ./lexer/src/main/lexer <filename.fl>
 ```
