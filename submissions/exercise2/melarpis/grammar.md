@@ -10,8 +10,8 @@
 
 ##Terminals
 -------------
+**Variables:**
 ```
-*Variables:*
 number 
 	e.g. 123, .123, 1.23
 word
@@ -19,7 +19,9 @@ word
 symbol 
 	e.g. _ ( ) [ ] { } = ! < > * / + - % & | . , ? ;
 
-*Keywords:*
+```
+**Keywords:**
+```
 let
 fn
 out
