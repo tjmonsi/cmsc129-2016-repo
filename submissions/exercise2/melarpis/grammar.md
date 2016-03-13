@@ -145,27 +145,27 @@ obj
 ## Example Codes
 **hello_world.fl :**
 ---------------------
-    ```
-    fn main() {
-    	out("Hello World\n", output.txt);
-    }
-    ```
+```rust
+fn main() {
+    out("Hello World\n", output.txt);
+}
+```
 **one_to_ten.fl:**
 ---------------------
-    ```
-    fn main() {
-    	for(let i = 1; i <= 10; i++) {
-        	out(i, output.txt);
-    	}
+```rust
+fn main() {
+    for(let i = 1; i <= 10; i++) {
+        out(i, output.txt);
     }
-    ```
+}
+```
 **fibonacci.fl:**
 ---------------------
-    ```
-    fn fibonacci(n) {
-        if(n <= 2) {
-            return 1;
-        } 
-        fibonacci(n - 1) + fibonacci(n - 2)
-    }
-    ```
+```rust
+fn fibonacci(n) {
+    if(n <= 2) {
+        return 1;
+    } 
+    fibonacci(n - 1) + fibonacci(n - 2)
+}
+```
