@@ -9,9 +9,12 @@ hence, it is verbose. The plus side is that it
 is already written left recursively to avoid
 ambiguity.
 
+# Contents
+- [Terminals](#Terminals)
+- [Non-Terminals](#Non-Terminals)
 ----------
 
-##Terminals
+(#Terminals)
 -------------
 **Variables:**
 ```
@@ -48,7 +51,7 @@ false
 */
 ```
 
-##Non-Terminals
+(#Non-Terminals)
 -------------
 ```
 vardec
@@ -80,7 +83,7 @@ numbers
 obj
 ```
 
-##Production Rules
+#Production Rules
 --------------
 
 |LHS | RHS|
@@ -142,7 +145,7 @@ obj
 |output| out(obj, string); |
 |input | in(varname, string); |
 
-## Example Codes
+# Example Codes
 **hello_world.fl :**
 ---------------------
 ```rust
