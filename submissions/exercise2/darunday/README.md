@@ -13,11 +13,6 @@ multirust update
 ```
 ## Building
 
-Build using cargo:
-``` sh
-cargo build
-```
-
 Or build the debug binary using cargo:
 ``` sh
 cargo build
