@@ -21,11 +21,11 @@ ambiguity.
 -------------
 **Variables:**
 ```
-number 
+number
 	e.g. 123, .123, 1.23
 word
 	e.g. a, ab, abc, A, aB, aBc, ab_c
-symbol 
+symbol
 	e.g. _ ( ) [ ] { } = ! < > * / + - % & | . , ? ;
 
 ```
@@ -43,6 +43,11 @@ while
 do_while
 true
 false
+continue
+break
+if
+else_if
+else
 ==
 !=
 <=
@@ -131,7 +136,7 @@ obj
 |functionname| word |
 |functioncall| functionname(args) |
 |function| functionname(params) { block } |
-|block| stmt \| block stmt| 
+|block| stmt \| block stmt|
 ||return stmt; \| block return stmt;|
 ||vardec \| block varde |
 ||ifblock \| block ifblock |
@@ -171,7 +176,7 @@ fn main() {
 fn fibonacci(n) {
     if(n <= 2) {
         return 1;
-    } 
+    }
     fibonacci(n - 1) + fibonacci(n - 2)
 }
 ```
