@@ -4,8 +4,8 @@ code = open('sample1.scb', 'r')
 tokens = LexicalAnalyzer.tokenizer(code.read())
 
 print("Tokens for Sample 1")
-for s in tokens.keys():
-	print("token:"+s+" label:"+tokens.get(s))
+for s in tokens:
+	print("token:"+s[0]+" label:"+s[1])
 #
 #code = open('sample2.scb', 'r')
 #tokens = LexicalAnalyzer.tokenizer(code.read())

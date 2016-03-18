@@ -133,6 +133,7 @@ def initDFA():
 		tf[(dfa.transitionFunction.get(0, '-'), s)] = DFA.Nstates
 	acceptStates = {DFA.Nstates}
 	lexeme[DFA.Nstates] = 'Integer Literal'
+	tf[DFA.Nstates, '.'] = DFA.Nstates+1
 	DFA.Nstates += 1
 	tf[(0, '.')] = DFA.Nstates
 	tf[(dfa.transitionFunction.get(0, '-'), '.')] = DFA.Nstates
@@ -162,7 +163,7 @@ def initDFA():
 	return dfa
 
 def tokenizer(stream):
-	tokens = dict()
+	tokens = []
 	dfa = initDFA()
 
 	dfa.reset()
@@ -176,11 +177,11 @@ def tokenizer(stream):
 			next = dfa.checkNext(stream[i+1])
 			if accept and not next:
 				#tokens.append(dfa.token)
-				tokens[dfa.token] = dfa.lexemes.get(dfa.current)
+				tokens.append((dfa.token, dfa.lexemes.get(dfa.current)))
 				dfa.reset()
 		elif accept:
 			#tokens.append(dfa.token)
-			tokens[dfa.token] = dfa.lexemes.get(dfa.current)
+			tokens.append((dfa.token, dfa.lexemes.get(dfa.current)))
 			dfa.reset()
 		i += 1
 
