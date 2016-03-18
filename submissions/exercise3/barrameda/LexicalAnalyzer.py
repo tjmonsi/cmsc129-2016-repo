@@ -3,9 +3,10 @@ import string
 class DFA():
 	Nstates = 0
 
-	def __init__(self, tf, ac, ss):
+	def __init__(self, tf, lx, ac,  ss):
 		self.token = ""
 		self.transitionFunction = tf
+		self.lexemes = lx
 		self.acceptStates = ac
 		self.startState = ss
 		return
@@ -24,6 +25,7 @@ class DFA():
 	def addBranch(self, b):
 		self.acceptStates = self.acceptStates | b.acceptStates
 		self.transitionFunction.update(b.transitionFunction)
+		self.lexemes.update(b.lexemes)
 		return
 
 	def checkNext(self, c):
@@ -42,24 +44,23 @@ class DFA():
 
 def keywordTF(str, dfa):
 	tf = dict()
+	lexeme = dict()
 	start = DFA.Nstates
 	i = current = 0
 	while(i<len(str)):
 		if (current, str[i]) not in dfa.transitionFunction:
-			if i==0:
-				tf[(current, str[i])] = DFA.Nstates+1
-			else:
-				tf[(current, str[i])] = DFA.Nstates+1
+			tf[(current, str[i])] = DFA.Nstates+1
 			DFA.Nstates+=1
 			current = DFA.Nstates
 		else:
 			current = dfa.transitionFunction.get((current, str[i]))
 		i += 1
 	acceptState = {current}
-	return DFA(tf, acceptState, start)
+	lexeme[current] = str
+	return DFA(tf, lexeme, acceptState, start)
 
 def initDFA():
-	dfa = DFA({}, set(), 0)
+	dfa = DFA({}, {}, set(), 0)
 	#Keywords
 	dfa.addBranch(keywordTF('new', dfa))
 	dfa.addBranch(keywordTF('print', dfa))
@@ -106,6 +107,7 @@ def initDFA():
 
 	#Variable Identifier
 	tf = dict()
+	lexeme = dict()
 	DFA.Nstates += 1
 	tf[(0, '$')] = DFA.Nstates
 	tf[(0, '!')] = DFA.Nstates
@@ -118,16 +120,19 @@ def initDFA():
 		tf[(DFA.Nstates, str(x))] = DFA.Nstates
 		tf[(DFA.Nstates+1, str(x))] = DFA.Nstates+1
 	DFA.Nstates += 1
-	dfa.addBranch(DFA(tf, {DFA.Nstates}, 0))
+	lexeme[DFA.Nstates] = 'Variable Identifier'
+	dfa.addBranch(DFA(tf, lexeme, {DFA.Nstates}, 0))
 
 	#Integer/Float Literal
 	tf = dict()
+	lexeme = dict()
 	DFA.Nstates += 1
 	for s in range(10):
 		tf[(0, str(s))] = DFA.Nstates
 		tf[(DFA.Nstates, str(s))] = DFA.Nstates
 		tf[(dfa.transitionFunction.get(0, '-'), s)] = DFA.Nstates
 	acceptStates = {DFA.Nstates}
+	lexeme[DFA.Nstates] = 'Integer Literal'
 	DFA.Nstates += 1
 	tf[(0, '.')] = DFA.Nstates
 	tf[(dfa.transitionFunction.get(0, '-'), '.')] = DFA.Nstates
@@ -136,10 +141,12 @@ def initDFA():
 		tf[(DFA.Nstates+1, str(s))] = DFA.Nstates+1
 	DFA.Nstates += 1
 	acceptStates = acceptStates | {DFA.Nstates}
-	dfa.addBranch(DFA(tf, acceptStates, 0))
+	lexeme[DFA.Nstates] = 'Float Literal'
+	dfa.addBranch(DFA(tf, lexeme, acceptStates, 0))
 
 	#String Literal
 	tf = dict()
+	lexeme = dict()
 	DFA.Nstates += 1
 	tf[(0, '"')] = DFA.Nstates
 	for s in string.printable:
@@ -149,12 +156,13 @@ def initDFA():
 	tf[(DFA.Nstates, '"')] = DFA.Nstates+1
 	tf[(dfa.transitionFunction.get(0, '"'), '"')] = DFA.Nstates+1
 	DFA.Nstates += 1
-	dfa.addBranch(DFA(tf, {DFA.Nstates}, 0))
+	lexeme[DFA.Nstates] = 'String Literal'
+	dfa.addBranch(DFA(tf, lexeme, {DFA.Nstates}, 0))
 
 	return dfa
 
 def tokenizer(stream):
-	tokens = []
+	tokens = dict()
 	dfa = initDFA()
 
 	dfa.reset()
@@ -167,10 +175,12 @@ def tokenizer(stream):
 		if i+1<len(stream):
 			next = dfa.checkNext(stream[i+1])
 			if accept and not next:
-				tokens.append(dfa.token)
+				#tokens.append(dfa.token)
+				tokens[dfa.token] = dfa.lexemes.get(dfa.current)
 				dfa.reset()
 		elif accept:
-			tokens.append(dfa.token)
+			#tokens.append(dfa.token)
+			tokens[dfa.token] = dfa.lexemes.get(dfa.current)
 			dfa.reset()
 		i += 1
 
