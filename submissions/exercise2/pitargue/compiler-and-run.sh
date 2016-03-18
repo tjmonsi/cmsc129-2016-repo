@@ -1,1 +1,1 @@
-python3 lexer.py
+python3 lexical_analyzer.py

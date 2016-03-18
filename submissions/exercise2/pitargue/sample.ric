@@ -1,1 +1,3 @@
-def bmi = "hello world"
+def getBMI = function():
+    return height / weight*2
+
