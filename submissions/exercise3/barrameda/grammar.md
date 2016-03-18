@@ -46,24 +46,25 @@ Literals
 
 #Non Terminals
 ```
-<assign>:= <varident><eq><expression><line-delimiter>
-<varident>:= <dataTypes>[a-zA-Z][a-zA-Z0-9]*<line-delimiter>
 <dataTypes>:= (<string>|<integer>|<float>|<boolean>)
-<expression>:= (<arithOp>|<booleanOp>|<stringOp>|<Literals>)<line-delimiter>
+<statement>:= (<expression>|<vardec>|<arrayDec>|<assign>|<if-then>|<for-loop>|<while-loop>|<do-while-loop>|<functionDec>|<functionCall>|<output>|<input>)
+<expression>:= (<arithOp>|<booleanOp>|<stringOp>|<Literals>)
 <arithOp>:= (<multiply>|<divide>|<modulo>|<add>|<subtract>)
 <booleanOp>:= (<and>|<or>|<lessThan>|<greaterThan>|<equal>|<lessOrEqual>|<greaterOrEqual>)
 <stringOp>:= (<concat>|<substring>|<length>)
-<operand>:= (<varident>|<expression>)
-<codeblock>:= (<expression>|<expression><codeblock>)
+<operand>:= (<varident>|<statement>)
+<codeblock>:= (<statement>|<statement><codeblock>)
 ```
 
 #Production List
 ```
-<vardec>:= new <varident>
-	:= new <assign>
-<arrayDec>:= new <varident>[<numbers>]
+<assign>:= <varident><eq><statement><line-delimiter>
+<varident>:= <dataTypes>[a-zA-Z][a-zA-Z0-9]*<line-delimiter>
+<vardec>:= new <varident><line-delimiter>
+	:= new <assign><line-delimiter>
+<arrayDec>:= new <varident>[<numbers>]<line-delimiter>
 
-<output>:= print(<expression>)<line-delimiter>
+<output>:= print(<statement>)<line-delimiter>
 <input>:= scan(<varident>, <strings>)<line-delimiter>
 
 <multiply>:= <operand><symbol><operand>
@@ -85,7 +86,7 @@ Literals
 <length>:= len(<strings>|<operand>)<line-delimiter>
 
 <functionDec>:= func <varident>(E|<varident>) {<codeblock> return}
-<functionCall>:= call <varident>(E|<varident>|<expression>)
+<functionCall>:= call <varident>(E|<varident>|<statement>)
 
 <if-then>:= 	if(<booleanOp>) {<codeblock>}
 		elsif(<booleanOp>) {<codeblock>}
