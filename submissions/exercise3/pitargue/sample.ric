@@ -1,0 +1,4 @@
+function main() {
+    output(boolean ? true : false);
+    output((true || false) + 2);
+}
