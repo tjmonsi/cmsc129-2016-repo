@@ -30,3 +30,7 @@ _OR_
 ```bash
 $ ./lexer/src/main/lexer <filename.fl>
 ```
+**Test**
+```bash
+$ cargo test
+```

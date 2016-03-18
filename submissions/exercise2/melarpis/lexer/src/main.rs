@@ -148,8 +148,18 @@ fn main() {
         let mut lexer = Lexer::new(code);
         let lexemes = lexer.analyze();
         println!("Lexemes:");
-        for l in lexemes{
+        for l in lexemes.clone() {
             println!("{:?}", l);
         }
     }
+}
+
+#[test]
+fn test() {
+    let mut f = fs::File::open("tests/test.fl").expect("FILE INPUT ERROR");
+    let mut code = String::new();
+    f.read_to_string(&mut code).expect("FILE READING ERROR");
+    let mut lexer = Lexer::new(code);
+    let lexemes = lexer.analyze();
+    assert_eq!(lexemes.len(), 35);
 }
