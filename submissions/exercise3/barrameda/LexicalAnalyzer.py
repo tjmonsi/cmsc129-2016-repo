@@ -1,37 +1,37 @@
 import string
-			
+
 class DFA():
-	Nstates = 0	
-	
+	Nstates = 0
+
 	def __init__(self, tf, ac, ss):
 		self.token = ""
 		self.transitionFunction = tf
 		self.acceptStates = ac
 		self.startState = ss
 		return
-		
+
 	def reset(self):
 		self.current = self.startState
 		self.token = ""
 		return
-		
+
 	def goalCheck(self):
 		if self.current in self.acceptStates:
 			return True
 		else:
 			return False
-		
+
 	def addBranch(self, b):
 		self.acceptStates = self.acceptStates | b.acceptStates
 		self.transitionFunction.update(b.transitionFunction)
 		return
-	
+
 	def checkNext(self, c):
 		if (self.current, c) in self.transitionFunction:
 			return True
 		else:
 			return False
-		
+
 	def transition(self, inp):
 		if (self.current, inp) not in self.transitionFunction:
 			return False
@@ -39,7 +39,7 @@ class DFA():
 			self.current = self.transitionFunction.get((self.current, inp))
 			self.token = self.token + inp
 			return True
-	
+
 def keywordTF(str, dfa):
 	tf = dict()
 	start = DFA.Nstates
@@ -57,7 +57,7 @@ def keywordTF(str, dfa):
 		i += 1
 	acceptState = {current}
 	return DFA(tf, acceptState, start)
-		
+
 def initDFA():
 	dfa = DFA({}, set(), 0)
 	#Keywords
@@ -87,6 +87,7 @@ def initDFA():
 	dfa.addBranch(keywordTF(']', dfa))
 	dfa.addBranch(keywordTF('{', dfa))
 	dfa.addBranch(keywordTF('}', dfa))
+	dfa.addBranch(keywordTF(';', dfa))
 	dfa.addBranch(keywordTF('=', dfa))
 	dfa.addBranch(keywordTF('+', dfa))
 	dfa.addBranch(keywordTF('-', dfa))
@@ -102,7 +103,7 @@ def initDFA():
 	dfa.addBranch(keywordTF('/*', dfa))
 	dfa.addBranch(keywordTF('*/', dfa))
 	dfa.addBranch(keywordTF('_i', dfa))
-	
+
 	#Variable Identifier
 	tf = dict()
 	DFA.Nstates += 1
@@ -118,7 +119,7 @@ def initDFA():
 		tf[(DFA.Nstates+1, str(x))] = DFA.Nstates+1
 	DFA.Nstates += 1
 	dfa.addBranch(DFA(tf, {DFA.Nstates}, 0))
-	
+
 	#Integer/Float Literal
 	tf = dict()
 	DFA.Nstates += 1
@@ -136,7 +137,7 @@ def initDFA():
 	DFA.Nstates += 1
 	acceptStates = acceptStates | {DFA.Nstates}
 	dfa.addBranch(DFA(tf, acceptStates, 0))
-	
+
 	#String Literal
 	tf = dict()
 	DFA.Nstates += 1
@@ -149,13 +150,13 @@ def initDFA():
 	tf[(dfa.transitionFunction.get(0, '"'), '"')] = DFA.Nstates+1
 	DFA.Nstates += 1
 	dfa.addBranch(DFA(tf, {DFA.Nstates}, 0))
-		
+
 	return dfa
 
 def tokenizer(stream):
 	tokens = []
 	dfa = initDFA()
-	
+
 	dfa.reset()
 	i=0
 	while(i<len(stream)):
