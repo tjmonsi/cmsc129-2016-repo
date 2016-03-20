@@ -52,13 +52,13 @@ Literals
 <arithOp>:= (<multiply>|<divide>|<modulo>|<add>|<subtract>)
 <booleanOp>:= (<and>|<or>|<lessThan>|<greaterThan>|<equal>|<lessOrEqual>|<greaterOrEqual>)
 <stringOp>:= (<concat>|<substring>|<length>)
-<operand>:= (<varident>|<statement>)
+<operand>:= (<varident>|<expression>)
 <codeblock>:= (<statement>|<statement><codeblock>)
 ```
 
 #Production List
 ```
-<assign>:= <varident><eq><statement><line-delimiter>
+<assign>:= <varident><eq><expression><line-delimiter>
 <varident>:= <dataTypes>[a-zA-Z][a-zA-Z0-9]*<line-delimiter>
 <vardec>:= new <varident><line-delimiter>
 	:= new <assign><line-delimiter>
