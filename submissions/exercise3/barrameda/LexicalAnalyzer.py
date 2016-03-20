@@ -1,4 +1,5 @@
 import string
+from Lexeme import Lexeme
 
 class DFA():
 	Nstates = 0
@@ -179,11 +180,11 @@ def tokenizer(stream):
 				next = dfa.checkNext(line[i+1])
 				if accept and not next:
 					#tokens.append(dfa.token)
-					tokens.append((dfa.token, dfa.lexemes.get(dfa.current), lineCount))
+					tokens.append(Lexeme(dfa.token, dfa.lexemes.get(dfa.current), lineCount))
 					dfa.reset()
 			elif accept:
 				#tokens.append(dfa.token)
-				tokens.append((dfa.token, dfa.lexemes.get(dfa.current), lineCount))
+				tokens.append(Lexeme(dfa.token, dfa.lexemes.get(dfa.current), lineCount))
 				dfa.reset()
 			i += 1
 		lineCount += 1
