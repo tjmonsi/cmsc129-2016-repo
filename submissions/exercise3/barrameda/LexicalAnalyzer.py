@@ -167,22 +167,25 @@ def tokenizer(stream):
 	dfa = initDFA()
 
 	dfa.reset()
-	i=0
-	while(i<len(stream)):
-		valid = dfa.transition(stream[i])
-		if not valid:
-			dfa.reset()
-		accept = dfa.goalCheck()
-		if i+1<len(stream):
-			next = dfa.checkNext(stream[i+1])
-			if accept and not next:
-				#tokens.append(dfa.token)
-				tokens.append((dfa.token, dfa.lexemes.get(dfa.current)))
+	lineCount=1
+	for line in stream.split('\n'):
+		i=0
+		while(i<len(line)):
+			valid = dfa.transition(line[i])
+			if not valid:
 				dfa.reset()
-		elif accept:
-			#tokens.append(dfa.token)
-			tokens.append((dfa.token, dfa.lexemes.get(dfa.current)))
-			dfa.reset()
-		i += 1
+			accept = dfa.goalCheck()
+			if i+1<len(line):
+				next = dfa.checkNext(line[i+1])
+				if accept and not next:
+					#tokens.append(dfa.token)
+					tokens.append((dfa.token, dfa.lexemes.get(dfa.current), lineCount))
+					dfa.reset()
+			elif accept:
+				#tokens.append(dfa.token)
+				tokens.append((dfa.token, dfa.lexemes.get(dfa.current), lineCount))
+				dfa.reset()
+			i += 1
+		lineCount += 1
 
 	return tokens
