@@ -1,0 +1,17 @@
+func !main(){
+	new !n = 5
+	new !first
+	new !second
+	new !next
+	
+	while(_i<n) {
+		if(_i<=1) {
+			!next = _i
+		} else {
+			!next = !first + !second
+			!first = !second
+			!second = !next
+		}
+		print(!next)
+	}
+}
