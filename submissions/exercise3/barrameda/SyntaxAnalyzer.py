@@ -3,9 +3,10 @@ from Lexeme import Lexeme
 class Node():
     Error = []
     def __init__(self, lx):
+        self.index = 0
         self.lexemes = lx
-        self.nextLexeme = self.lexemes.pop(0)
-        self.backtrack = None
+        self.nextLexeme = self.lexemes[0]
+        self.prevLexeme = None
         return
 
     def parseError(self, err):
@@ -13,8 +14,15 @@ class Node():
         return
 
     def lookahead(self):
-        self.backtrack = self.nextLexeme
-        self.nextLexeme = self.lexemes.pop(0)
+        self.index += 1
+        if self.index < len(self.lexemes):
+            self.prevLexeme = self.nextLexeme
+            self.nextLexeme = self.lexemes[self.index]
+        return
+
+    def backtrack(self):
+        self.index -= 1
+        self.nextLexeme = self.lexemes[self.index]
         return
 
     def parse(self):
@@ -28,7 +36,7 @@ class Node():
         self.statement()
 
         #<CODEBLOCK>:= <STATEMENT><CODEBLOCK>
-        if len(self.lexemes) != 0:
+        if self.index < len(self.lexemes):
             self.lookahead()
             self.codeblock()
         return
@@ -39,8 +47,8 @@ class Node():
             self.lookahead()
             self.varDec()
 
-        if self.operand():
-            if expression():
+        #if self.operand():
+            #if expression():
         return
 
     def varDec(self):
@@ -48,32 +56,42 @@ class Node():
         if self.nextLexeme.label == 'Variable Identifier':
             self.lookahead()
         else:
-            self.parseError('Expected Variable Identifier at line '+str(self.backtrack.lineNumber))
+            self.parseError('Expected Variable Identifier at line '+str(self.prevLexeme.lineNumber))
 
         if self.nextLexeme.label == ';':
             self.lookahead()
         else:
-            self.parseError('Expected \';\' at line '+str(self.backtrack.lineNumber))
+            self.parseError('Expected \';\' at line '+str(self.prevLexeme.lineNumber))
         return
 
     def expression():
-        if not self.operand()
-            self.parseError('Expected operand at line '+str(self.backtrack.lineNumber))
-            return False
+        if not self.operand():
 
+            return False
+        if self.operation():
+            True
         return True
 
     def operation():
-        if self.nextLexeme.label in ['+', '-', '*', '/', '%']:
+        if self.operand():
             self.lookahead()
-            if self.operand():
-        else:
-            return False
-        return True
+            if self.nextLexeme.label in ['+', '-', '*', '/', '%']:
+                self.lookahead()
+                if self.operand():
+                    self.lookahead()
+                    return True
+                else:
+                    self.backtrack()
+            else:
+                self.backtrack()
+        return False
 
     def operand():
         if self.nextLexeme.label in ['Integer Literal', 'Float Literal', 'String Literal', 'Variable Identifier']:
-
+            return True
+        else:
+            self.parseError('Expected operand at line '+str(self.prevLexeme.lineNumber))
+        return False
 
 def parser(tokens):
     global PTree
