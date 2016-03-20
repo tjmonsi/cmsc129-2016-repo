@@ -1,11 +1,14 @@
 import LexicalAnalyzer
+import SyntaxAnalyzer
 
 code = open('sample1.scb', 'r')
 tokens = LexicalAnalyzer.tokenizer(code.read())
 
 print("Tokens for Sample 1")
 for s in tokens:
-	print("token:"+s[0]+" label:"+s[1])
+	print("token:"+s.token+" label:"+s.label+" line:"+str(s.lineNumber))
+
+SyntaxAnalyzer.parser(tokens)
 #
 #code = open('sample2.scb', 'r')
 #tokens = LexicalAnalyzer.tokenizer(code.read())
