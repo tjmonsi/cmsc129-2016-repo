@@ -18,6 +18,7 @@ class Node():
         if self.index < len(self.lexemes):
             self.prevLexeme = self.nextLexeme
             self.nextLexeme = self.lexemes[self.index]
+            #print(self.nextLexeme.label)
         return
 
     def backtrack(self):
@@ -47,8 +48,9 @@ class Node():
             self.lookahead()
             self.varDec()
 
-        #if self.operand():
-            #if expression():
+        if self.operand():
+            if self.expression():
+                True
         return
 
     def varDec(self):
@@ -64,21 +66,24 @@ class Node():
             self.parseError('Expected \';\' at line '+str(self.prevLexeme.lineNumber))
         return
 
-    def expression():
+    def expression(self):
         if not self.operand():
-
             return False
         if self.operation():
             True
         return True
 
-    def operation():
+    def operation(self):
         if self.operand():
             self.lookahead()
             if self.nextLexeme.label in ['+', '-', '*', '/', '%']:
                 self.lookahead()
                 if self.operand():
                     self.lookahead()
+                    if self.nextLexeme.label == ';':
+                        self.lookahead()
+                    else:
+                        self.parseError('Expected \';\' at line '+str(self.prevLexeme.lineNumber))
                     return True
                 else:
                     self.backtrack()
@@ -86,11 +91,9 @@ class Node():
                 self.backtrack()
         return False
 
-    def operand():
+    def operand(self):
         if self.nextLexeme.label in ['Integer Literal', 'Float Literal', 'String Literal', 'Variable Identifier']:
             return True
-        else:
-            self.parseError('Expected operand at line '+str(self.prevLexeme.lineNumber))
         return False
 
 def parser(tokens):
