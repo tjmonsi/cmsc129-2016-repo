@@ -1,5 +1,5 @@
 # Description
-## The **lexer.rs** is a rust implementation of a lexical analyzer for Ferriel's Language using Deterministic Finite-state Automata.
+## The **lexer.rs** is a rust implementation of a lexical analyzer for F Language using Deterministic Finite-state Automata.
 -------------
 
 
@@ -24,9 +24,13 @@ $ cargo build lexer
 ```
 **Sample Run**
 ```bash
-$ cargo run lexer <filename.fl>
+$ cargo run <filename.fl>
 ```
 _OR_
 ```bash
 $ ./lexer/src/main/lexer <filename.fl>
+```
+**Test**
+```bash
+$ cargo test
 ```

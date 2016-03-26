@@ -2,12 +2,8 @@
 ===================
 [0.0.1] - 13th of March, 2016
 
-# Some Notes
-------------
-The grammar written below does not use epsilon
-hence, it is verbose. The plus side is that it
-is already written left recursively to avoid
-ambiguity.
+# TODO
+- Fixed grammar's left recursive orientation
 
 # Contents
 - [Terminals](#terminals)
@@ -161,7 +157,7 @@ fn main() {
     out("Hello World\n", output.txt);
 }
 ```
-**one_to_ten.fl:**
+**one\_to\_ten.fl:**
 ---------------------
 ```rust
 fn main() {
