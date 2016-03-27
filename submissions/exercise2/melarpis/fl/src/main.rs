@@ -10,8 +10,6 @@ fn main() {
     else {
         let filename = env::args().last().unwrap();
         let mut f = fs::File::open(&filename).expect("FILE INPUT ERROR");
-        //let mut bytes = Vec::<u8>::new();
-        //f.read_to_end(&mut bytes).unwrap();
         let mut code = String::new();
         f.read_to_string(&mut code).expect("FILE READING ERROR");
         println!("Source {}:", filename);
@@ -19,12 +17,12 @@ fn main() {
         let mut lexer = Lexer::new(code);
         let lexemes = lexer.analyze();
         println!("Lexemes:");
-        for l in lexemes.clone() {
+        for l in lexemes{
             println!("{:?}", l);
         }
     }
 }
-
+#[allow(unused_variables)]
 #[test]
 fn test() {
     let mut f = fs::File::open("tests/test.fl").expect("FILE INPUT ERROR");
@@ -32,5 +30,6 @@ fn test() {
     f.read_to_string(&mut code).expect("FILE READING ERROR");
     let mut lexer = Lexer::new(code);
     let lexemes = lexer.analyze();
-    assert_eq!(lexemes.len(), 35);
+    let errors = lexer.count_errors();
+    assert_eq!(errors, 0);
 }
