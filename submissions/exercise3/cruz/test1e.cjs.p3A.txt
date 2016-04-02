@@ -1,0 +1,29 @@
+Start
+Main
+Fn-def
+epsilon
+function
+main
+(
+epsilon
+error recovery
+{
+Code-Block
+}
+newline
+Code-Block
+\n
+epsilon
+Statement
+epsilon
+print-call
+error recovery
+print
+Fn-call'
+(
+Fn-Param
+)
+Expression
+epsilon
+"Hello World!"
+epsilon

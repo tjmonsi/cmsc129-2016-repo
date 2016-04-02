@@ -59,7 +59,7 @@ temp
 \s
 =
 \s
-"'chan'ged!"
+"ch\"anged!"
 ;
 \n
 \t

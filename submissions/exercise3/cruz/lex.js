@@ -1,49 +1,15 @@
-//References:
-//http://stackoverflow.com/questions/4351521/how-do-i-pass-command-line-arguments-to-node-js
-//https://nodejs.org/docs/latest/api/fs.html
-
-/*[Rev 1]
-	Fixed '"' and "'" ambiguity; 
-	Supports escape character '\';
-	Added "if", "else", "continue" and "break"
-	Can determine type during token analysis
-*/
-
-/*
-	Content Tree:
-	Classes
-		> State
-			> addNext()
-		> Globals
-			> fs
-			> EOF
-			> SEPARATOR
-			> sStart
-			> tokt
-	Function
-		> compile()
-		> newToken()
-		> newKeyWord()
-		> analyze()
-			> outAndReset()
-		> main()
-			> nextStep()
-
-*/
-
-//---[:Dependencies
-//---]
 
 //---[:Classes
 //--[State (FA State)
 	//A state that contains its character, type, next characters, and if it accepts the token
 	var State = function(character, accept){
 		this.character = character;
-		this.next = {};
+		this.next = [];
 		this.accept = accept;
+		this.type = "unknown";
 	}
 	//Connects a state to this state
-	State.prototype.addNext = function(state){	
+	State.prototype.addNext = function(state){
 		var exists = (state.character in this.next);
 		//console.log(exists);
 		if(exists){
@@ -61,10 +27,11 @@
 //--[Globals
 	var fs = require("fs");					//File System (file read/write)
 	var EOF = String.fromCharCode(22);		//Added character to EOF
-	var sStart = new State(null, false)		//Starting Universal FA State
-	var finout = []							//the final output;
-	var isloaded = false;					//this is loaded by syn.js
+	var IS = String.fromCharCode(26);		//Added character to EOF
+	var isloaded = false;
 	var failed = false;
+	var sStart = new State(null, false)		//Starting Universal FA State
+
 //--]
 //---]
 
@@ -75,45 +42,47 @@ function compile(){
 
 	//import all characters
 	for (var i = 32; i < 127; i++) {
-		newKeyWord(String.fromCharCode(i));
+		newKeyWord(String.fromCharCode(i), String.fromCharCode(i));
 	}
+
 	//numbers configuration
 	for (var i = 0; i < 10; i++) {
+		sStart.next[i.toString()].type = "number";
 		for (var j = 0; j < 10; j++) {
 			sStart.next[i.toString()].addNext(sStart.next[j.toString()]);
 		}
 	}
 	//decimals configuration
+	var dec = new State(".", false);
 	for (var i = 0; i < 10; i++) {
-		newKeyWord("."+i.toString());
+		dec.addNext(new State(i.toString(), true));
 	}
-	sStart.next["."].accept=true;
-	//first decimal
-	var dec = sStart.next["."];
 	for (var i = 0; i < 10; i++) {
-		sStart.next[i.toString()].addNext(dec);	
+		sStart.next[i.toString()].addNext(dec);
 	}
 	//numbers after first decimal
 	for (var i = 0; i < 10; i++) {
+		dec.next[i.toString()].type = "number"
 		for (var j = 0; j < 10; j++) {
 			dec.next[i.toString()].addNext(dec.next[j.toString()]);
 		}
 	}
 	//setup negativity
-	sStart.next["-"] = new State("-",false);
-	for (var i = 0; i < 10; i++) {
-		sStart.next["-"].addNext(sStart.next[i.toString()]);
-	}
+	// sStart.next["-"].type = "-";
+	// for (var i = 0; i < 10; i++) {
+	// 	sStart.next["-"].addNext(sStart.next[i.toString()]);
+	// }
 
-	//word generation (for variable names and such)
+	//word generation (for identifiers and such)
 	//setup numbers after letters
 	var cr = new State(null,false);
 	for (var n = 0; n < 10; n++) {
 		cr.next[n.toString()] = new State(n.toString(),true);
+		cr.next[n.toString()].type = "identifier";
 	}
 	//setup characters
 	for (var i = 65; i <= 90; i++) {	//Capital
-
+		sStart.next[String.fromCharCode(i)].type = "identifier";
 		for (var n = 0; n < 10; n++) {
 			cr.next[n.toString()].addNext(sStart.next[String.fromCharCode(i)]);
 			sStart.next[String.fromCharCode(i)].addNext(cr.next[n.toString()]);
@@ -123,6 +92,7 @@ function compile(){
 		}
 	}
 	for (var i = 97; i <= 122; i++) {	//Small
+		sStart.next[String.fromCharCode(i)].type = "identifier";
 		for (var n = 0; n < 10; n++) {
 			cr.next[n.toString()].addNext(sStart.next[String.fromCharCode(i)]);
 			sStart.next[String.fromCharCode(i)].addNext(cr.next[n.toString()]);
@@ -139,70 +109,102 @@ function compile(){
 	}
 
 	//String generation (gathers "[<words>,<numbers>,<symbols>]")
-	var cstring = new State("\"",false);
-	var cstring2 = new State("\'",false);
+	var cstring = new State("\"",true);
+	var cstring2 = new State("\'",true);
+	cstring.type = "bad string";
+	cstring2.type = "bad string";
 
-	var esc1 = new State("\\",false);
-	var escnext = new State(null, false);
-	var esc2 = new State("\\",false);
-	var escnext2 = new State(null, false);
+	var esc1 = new State("\\",true);
+	esc1.type = "bad string";
+	var escnext = new State(null, true);
+	escnext.type = "bad string";
+	var esc2 = new State("\\",true);
+	esc2.type = "bad string";
+	var escnext2 = new State(null, true);
+	escnext2.type = "bad string";
 
-	sStart.next["\'"].accept = false;
-	sStart.next["\""].accept = false; 
-	cstring.next["\'"] = new State("\'",false);
-	cstring2.next["\""] = new State("\"",false);
+	sStart.next["\'"].accept = true;
+	sStart.next["\'"].type = "bad string";
+	sStart.next["\""].accept = true; 
+	sStart.next["\""].type = "bad string";
+	cstring.next["\'"] = new State("\'",true);
+	cstring.next["\'"].type = "bad string";
 	cstring.next["\""] = new State("\"",true);
+	cstring.next["\""].type = "string";
+	cstring2.next["\""] = new State("\"",true);
+	cstring2.next["\""].type = "bad string";
 	cstring2.next["\'"] = new State("\'",true);
-	cstring2.next["\""] = new State("\"",false);
+	cstring2.next["\'"].type = "string";
 	
+	//Illegal / unclosed string
+	cstring.next["\r"] = new State("\r", true);
+	cstring.next["\r"].type = "bad string";
+	cstring2.next["\r"] = new State("\r", true);
+	cstring2.next["\r"].type = "bad string";
+	cstring.next["\n"] = new State("\r", true);
+	cstring.next["\n"].type = "bad string";
+	cstring2.next["\n"] = new State("\r", true);
+	cstring2.next["\n"].type = "bad string";
+
 	sStart.next["\""] = cstring;
 	sStart.next["\'"] = cstring2;
-	sStart.next["\""].addNext(cstring.next["\'"]);
-	sStart.next["\'"].addNext(cstring2.next["\""]);
+	sStart.next["\'"].addNext(cstring.next["\'"]);
+	sStart.next["\""].addNext(cstring2.next["\""]);
 	cstring.next["\'"].addNext(cstring.next["\'"]);
-	cstring.next["\'"].addNext(cstring.next["\""]);
-	cstring2.next["\""].addNext(cstring2.next["\'"]);
+	cstring.next["\""].addNext(cstring.next["\""]);
+	cstring2.next["\'"].addNext(cstring2.next["\'"]);
 	cstring2.next["\""].addNext(cstring2.next["\""]);
 
-	escnext.next["\\"] = new State("\\",false);
-	escnext.next["\""] = new State("\"",false);
-	escnext.next["\'"] = new State("\'",false);
-	escnext2.next["\\"] = new State("\\",false);
-	escnext2.next["\""] = new State("\"",false);
-	escnext2.next["\'"] = new State("\'",false);
-
+	escnext.next["\\"] = new State("\\",true);
+	escnext.next["\\"].type = "bad string";
+	escnext.next["\""] = new State("\"",true);
+	escnext.next["\""].type = "bad string";
+	escnext.next["\'"] = new State("\'",true);
+	escnext.next["\'"].type = "bad string";
+	escnext2.next["\\"] = new State("\\",true);
+	escnext2.next["\\"].type = "bad string";
+	escnext2.next["\""] = new State("\"",true);
+	escnext2.next["\""].type = "bad string";
+	escnext2.next["\'"] = new State("\'",true);
+	escnext2.next["\'"].type = "bad string";
+	
 	for (var i = 32; i <= 126; i++) {
 		if(i == 34 || i == 39 || i == 92)
 			continue;
 		cstring.next[String.fromCharCode(i)] = new State(String.fromCharCode(i),false);
+		cstring.next[String.fromCharCode(i)].type = "bad string";
 		cstring2.next[String.fromCharCode(i)] = new State(String.fromCharCode(i),false);
+		cstring2.next[String.fromCharCode(i)].type = "bad string";
 		sStart.next["\""].addNext(cstring.next[String.fromCharCode(i)]);
 		sStart.next["\'"].addNext(cstring2.next[String.fromCharCode(i)]);
-		cstring.next[String.fromCharCode(i)].addNext(new State("\"",true));
+		cstring.next[String.fromCharCode(i)].addNext(cstring.next["\""]);
 		cstring.next[String.fromCharCode(i)].addNext(cstring.next["\'"]);
 		cstring.next["\'"].addNext(String.fromCharCode(i));
-		cstring2.next[String.fromCharCode(i)].addNext(new State("\'",true));
+		cstring2.next[String.fromCharCode(i)].addNext(cstring2.next["\'"]);
 		cstring2.next[String.fromCharCode(i)].addNext(cstring2.next["\""]);
 		cstring2.next["\""].addNext(String.fromCharCode(i));
 	
 	}
-	sStart.next["\""].addNext(new State("\"",true));
-	sStart.next["\'"].addNext(new State("\'",true));
 
+	//For escapes
 	for (var i = 32; i <= 126; i++) {
 		if(i == 34 || i == 39 || i == 92)
 			continue;
 		
 		esc1.next[String.fromCharCode(i)] = new State(String.fromCharCode(i), false);
+		esc1.next[String.fromCharCode(i)].type = "bad string";
 		esc2.next[String.fromCharCode(i)] = new State(String.fromCharCode(i), false);
+		esc2.next[String.fromCharCode(i)].type = "bad string";
 		
 		cstring.next[String.fromCharCode(i)].addNext(esc1);
 		cstring2.next[String.fromCharCode(i)].addNext(esc2);
 		cstring.next["\'"].addNext(cstring.next[String.fromCharCode(i)]);	
 		cstring2.next["\""].addNext(cstring.next[String.fromCharCode(i)]);	
 		escnext.next[String.fromCharCode(i)] = new State(String.fromCharCode(i), false);
+		escnext.next[String.fromCharCode(i)].type = "bad string";
 		escnext.next[String.fromCharCode(i)].next[String.fromCharCode(i)] = cstring.next[String.fromCharCode(i)];
 		escnext2.next[String.fromCharCode(i)] = new State(String.fromCharCode(i), false);
+		escnext2.next[String.fromCharCode(i)].type = "bad string";
 		escnext2.next[String.fromCharCode(i)].next[String.fromCharCode(i)] = cstring2.next[String.fromCharCode(i)];
 		
 		for (var j = 32; j <= 126; j++) {
@@ -210,7 +212,6 @@ function compile(){
 				continue;
 			esc1.next[String.fromCharCode(i)].next[String.fromCharCode(j)] = cstring.next[String.fromCharCode(j)];
 			esc2.next[String.fromCharCode(i)].next[String.fromCharCode(j)] = cstring2.next[String.fromCharCode(j)];
-			
 			cstring.next[String.fromCharCode(i)].addNext(cstring.next[String.fromCharCode(j)]);
 			cstring2.next[String.fromCharCode(i)].addNext(cstring2.next[String.fromCharCode(j)]);
 		}
@@ -258,43 +259,147 @@ function compile(){
 	escnext2.next["\\"] = esc2;
 
 	//Keywords
-	newKeyWord("true");
-	newKeyWord("false");
-	newKeyWord("var");
-	newKeyWord("function");
-	newKeyWord("print");
-	newKeyWord("load");
-	newKeyWord("return");
-	newKeyWord("if");
-	newKeyWord("else");
-	newKeyWord("for");
-	newKeyWord("do");
-	newKeyWord("while");
-	newKeyWord("null");
-	newKeyWord("continue");
-	newKeyWord("break");
+	newKeyWordSeq("break", "break");
+	newKeyWordSeq("continue", "continue");
+	newKeyWordSeq("do", "do");
+	newKeyWordSeq("else", "else");
+	newKeyWordSeq("for", "for");
+	newKeyWordSeq("if", "if");
+	newKeyWordSeq("load", "load");
+	newKeyWordSeq("null", "null");
+	newKeyWordSeq("print", "print");
+	newKeyWordSeq("return", "return");
+	newKeyWordSeq("true", "true");
+	newKeyWordSeq("var", "var");
+	newKeyWordSeq("while", "while");
+	
+	//Manual setting
 
+	function setCharacters(node, next){
+
+		for (var n = 0; n < 10; n++) {
+			node.next[n.toString()] = (sStart.next[n.toString()]);
+		}
+		for (var j = 97; j < 122; j++) {
+			if(String.fromCharCode(j) == next)
+				continue;
+			node.next[String.fromCharCode(j)] = (sStart.next[String.fromCharCode(j)]);
+		}
+		for (var j = 65; j < 90; j++) {
+			node.next[String.fromCharCode(j)] = (sStart.next[String.fromCharCode(j)]);
+		}
+
+	}
+
+	//Manually setting false keyword
+	var falseSet = sStart;
+	var nextn;
+	falseSet = falseSet.next["f"];
+	
+	nextn = new State("a",true);
+	nextn.type = "identifier"
+	falseSet.next["a"] = nextn;
+	falseSet = falseSet.next["a"];
+	
+	setCharacters(falseSet, "l");
+	nextn = new State("l",true);
+	nextn.type = "identifier"
+	falseSet.next["l"] = nextn;
+	falseSet = falseSet.next["l"];
+	
+	setCharacters(falseSet, "s");
+	nextn = new State("s",true);
+	nextn.type = "identifier"
+	falseSet.next["s"] = nextn;
+	falseSet = falseSet.next["s"];
+	
+	setCharacters(falseSet, "e");
+	nextn = new State("e",true);
+	nextn.type = "false"
+	falseSet.next["e"] = nextn;
+	falseSet = falseSet.next["e"];
+	
+	setCharacters(falseSet);
+	
+ 	falseSet = falseSet.next["f"].next["a"];
+	setCharacters(falseSet, "l");
+	
+	//Manually setting function keyword
+	var fnSet = sStart;
+	var nextn;
+	fnSet = fnSet.next["f"];
+	
+	nextn = new State("u",true);
+	nextn.type = "identifier"
+	fnSet.next["u"] = nextn;
+	fnSet = fnSet.next["u"];
+	
+	setCharacters(fnSet, "n");
+	nextn = new State("n",true);
+	nextn.type = "identifier"
+	fnSet.next["n"] = nextn;
+	fnSet = fnSet.next["n"];
+	
+	setCharacters(fnSet, "c");
+	nextn = new State("c",true);
+	nextn.type = "identifier"
+	fnSet.next["c"] = nextn;
+	fnSet = fnSet.next["c"];
+	
+	setCharacters(fnSet, "t");
+	nextn = new State("t",true);
+	nextn.type = "identifier"
+	fnSet.next["t"] = nextn;
+	fnSet = fnSet.next["t"];
+	
+	setCharacters(fnSet, "i");
+	nextn = new State("i",true);
+	nextn.type = "identifier"
+	fnSet.next["i"] = nextn;
+	fnSet = fnSet.next["i"];
+	
+	setCharacters(fnSet, "o");
+	nextn = new State("o",true);
+	nextn.type = "identifier"
+	fnSet.next["o"] = nextn;
+	fnSet = fnSet.next["o"];
+	
+	setCharacters(fnSet, "n");
+	nextn = new State("n",true);
+	nextn.type = "function"
+	fnSet.next["n"] = nextn;
+	fnSet = fnSet.next["n"];
+
+	
+	setCharacters(fnSet);
+	
+ 	fnSet = fnSet.next["f"].next["a"];
+	setCharacters(fnSet, "l");
+
+//	newKeyWordSeq("false", "false");
+//	newKeyWordSeq("function", "function");
+	
 	//Others
-	newKeyWord("==");
-	newKeyWord("!=");
-	newKeyWord("<=");
-	newKeyWord(">=");
+	newKeyWord("==", "==");
+	newKeyWord("!=", "!=");
+	newKeyWord("<=", "<=");
+	newKeyWord(">=", ">=");
 
 	//Special Symbols
-	newKeyWord("//");
-	newKeyWord("/*");
-	newKeyWord("*/");
-	newKeyWord("\t");
-	newKeyWord("\r\n");
-	newKeyWord("\n");
-
+	newKeyWord("//", "//");
+	newKeyWord("/*", "/*");
+	newKeyWord("*/", "*/");
+	newKeyWord("\t", "\\s");
+	newKeyWord("\r\n", "\\n");
+	newKeyWord("\n", "\\n");
+	sStart.next[" "].type = "\\s";
 
 }
 
 //Shortens the creation of tokens/lexemes
 //characters of the string will form a singly-linked connection
 //the last character of the string will be the accepting state
-function newToken(string){
+function newToken(string, type){
 	var characters = string.split('');
 	var states = [];
 	var i;
@@ -302,18 +407,68 @@ function newToken(string){
 		states.push(new State(characters[i],false));
 	}
 	var last = new State(characters[i],true);
+	last.type = type;
+	states.push(last);
+	return states;
+}
+
+//For identifier-clashing keywords
+function newTokenSeq(string, type){
+	var characters = string.split('');
+	var states = [];
+	var i;
+	for (i = 0; i < characters.length-1; i++) {
+		var next = new State(characters[i],true);
+		next.type = "identifier";
+		states.push(next);
+	}
+	var last = new State(characters[i],true);
+	last.type = type;
 	states.push(last);
 	return states;
 }
 
 //Easily adds a new keyword to the universal FA
 //adds the new token to the starting FA state 'sStart'
-function newKeyWord(string){
-	var temp = newToken(string);
+function newKeyWord(string, type){
+	var temp = newToken(string, type);
 	for (var i = 0; i < temp.length-1; i++) {
 		temp[i].addNext(temp[i+1]);
 	}
 	sStart.addNext(temp[0]);
+}
+
+//Specially made for identifier-clashing keywords
+function newKeyWordSeq(string, type){
+	var temp = newTokenSeq(string, type);
+	var chars = string.split('');
+	for (var i = 0; i < temp.length-1; i++) {
+		temp[i].next[chars[i+1]] = (temp[i+1]);
+		for (var n = 0; n < 10; n++) {
+			temp[i].next[n.toString()] = (sStart.next[n.toString()]);
+		}
+		for (var j = 97; j < 122; j++) {
+			if(String.fromCharCode(j) == chars[i+1])
+				continue;
+			temp[i].next[String.fromCharCode(j)] = (sStart.next[String.fromCharCode(j)]);
+		}
+		for (var j = 65; j < 90; j++) {
+			temp[i].next[String.fromCharCode(j)] = (sStart.next[String.fromCharCode(j)]);
+		}
+	}
+
+	for (var n = 0; n < 10; n++) {
+		temp[temp.length-1].next[n.toString()] = (sStart.next[n.toString()]);
+	}	
+	for (var j = 97; j < 122; j++) {
+		temp[temp.length-1].next[String.fromCharCode(j)] = (sStart.next[String.fromCharCode(j)]);
+	}
+	for (var j = 65; j < 90; j++) {
+		temp[temp.length-1].next[String.fromCharCode(j)] = (sStart.next[String.fromCharCode(j)]);
+	}
+
+	sStart.next[chars[0]] = (temp[0]);
+
 }
 
 //Lexical Analysis
@@ -322,6 +477,7 @@ function analyze(text,filename){
 
 	console.log("----------\nContent of \""+filename+"\":\n----------\n"+text+"\n----------");	
 	console.log("analyzing...");
+	console.log("----------\n");
 	var t = [];
 	var tokens = [];
 
@@ -341,7 +497,7 @@ function analyze(text,filename){
 	function outAndReset(){	//gets the token stack and starts again at sStart
 		token = tok.join('');
 //		console.log(token);
-		tokens.push(token);
+		tokens.push({"token":token, "type":temp.type});
 		tok = [];
 		temp = sStart;
 	}
@@ -356,19 +512,30 @@ function analyze(text,filename){
 			continue;
 		}
 		else{
-			if(accept){
-				
-				outAndReset();
 
+			var prevc = null;
+			if(temp.type == "bad string"){
+				if(c == '\n' || c == '\r')
+					prevc = c;
+			}
+			else if(temp.type == "unknown")
+				prevc = c;
+
+			outAndReset();
+
+			if(prevc != null){
+				temp = temp.next[prevc];
+				accept = temp.accept;
+				tok.push(prevc);
+			}
+
+			if(accept){
 				if(c in temp.next){
 					tok.push(c);
 					temp = temp.next[c];
 					accept = temp.accept;
 					continue;
 				}	
-			}
-			else{
-				tok.push(c);
 			}
 		}
 
@@ -380,16 +547,15 @@ function analyze(text,filename){
 
 }
 
-
 //This is the main function
 //checks for arguments
 //reads file
-function main(){
+exports.main = function(file){
 
-	var file = process.argv[2]
-	if(file === undefined || process.argv > 3){
+	if(file === undefined){
 		console.log("Error: No file argument!\nRun \"node lex.js <.cjs file>\" (sample: node lex.js sample.cjs)");
-		return
+		failed = true;
+		return;
 	}
 
 	//data = read file's text
@@ -401,27 +567,8 @@ function main(){
 	  	
 	  	//analyze
 	  	var tokens = analyze(data,file);
-	  	
-	  	//display and convert
-	  	console.log("----------\nlexemes:\n----------");
-	  	var output = "";
-	  	while(tokens.length > 0){
-	  		var token = tokens.shift();
-		  	var isNotNewLine = (token["token"]!="\r\n"&&token["token"]!="\n"&&token["token"]!="\r");
-	  		var isNotSpace = (token["token"]!=" ");
-	  		var isNotTab = (token["token"]!="\t");
-	  		var nextline = (isNotNewLine?(isNotSpace?(isNotTab?(token["token"] + IS + token["type"]):("\\t"+IS+"\\s")):("\\s"+IS+"\\s")):("\\n"+IS+"\\n")) + "\n";
-	  		output+=nextline;
-	  	}
-	  	console.log(output+"----------\n");
-
-	  	//save to new file with similar filename + ".lex"
-	  	fs.writeFile(file+".lex", output, function(err) {
-		    if(err) {
-		        return console.log(err);
-		    }
-		    console.log("Tokens compiled to "+file+".lex!");
-		}); 
+	  	finout = tokens;
+	  	isloaded = true;
 
 	}
 
@@ -430,7 +577,14 @@ function main(){
 
 }
 
+exports.getLexemes = () => finout;
+
+exports.loaded = () => isloaded;
+
+exports.failed = () => failed;
+
 //---]
 
 compile();
-main();
+
+//console.log(sStart.next[";"])

@@ -1,0 +1,29 @@
+Start
+|	L Main
+|	|	L Fn-def
+|	|	|	L function  =>  function
+|	|	|	L identifier  =>  main
+|	|	|	L (  =>  (
+|	|	|	L Fn-Param  =>  epsilon
+|	|	|	L )  =>  error recovery
+|	|	|	L {  =>  {
+|	|	|	L Code-Block
+|	|	|	|	L newline
+|	|	|	|	|	L \n  =>  \n
+|	|	|	|	|	L newline  =>  epsilon
+|	|	|	|	L Code-Block
+|	|	|	|	|	L Statement
+|	|	|	|	|	|	L print-call
+|	|	|	|	|	|	|	L print  =>  print
+|	|	|	|	|	|	|	L Fn-call'
+|	|	|	|	|	|	|	|	L (  =>  (
+|	|	|	|	|	|	|	|	L Fn-Param
+|	|	|	|	|	|	|	|	|	L Expression
+|	|	|	|	|	|	|	|	|	|	L string  =>  "Hello World!"
+|	|	|	|	|	|	|	|	|	|	L Num-Exp  =>  epsilon
+|	|	|	|	|	|	|	|	|	L Fn-Param'  =>  epsilon
+|	|	|	|	|	|	|	|	L )  =>  )
+|	|	|	|	|	|	L ;  =>  error recovery
+|	|	|	|	|	L Code-Block  =>  epsilon
+|	|	|	L }  =>  }
+|	|	L Main'  =>  epsilon
