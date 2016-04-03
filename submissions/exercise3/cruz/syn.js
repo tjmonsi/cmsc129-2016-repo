@@ -7,7 +7,7 @@ const lex = require("./lex.js");
 //---]
 
 //FILE CONFIGURATION
-var verbose = true;
+var verbose = false;
 
 //---[:Classes
 	
@@ -288,6 +288,7 @@ function compile(){
 	//Grammar for inside function code block
 	gRules.push(new Rule("Code-Block", ["Statement", "Code-Block"]))
 	gRules.push(new Rule("Code-Block", ["newline", "Code-Block"]))
+	gRules.push(new Rule("Code-Block", ["Return",";"]))
 	gRules.push(new Rule("Code-Block", ["epsilon"]))
 
 	//Grammar for statements
@@ -299,7 +300,6 @@ function compile(){
 	gRules.push(new Rule("Statement", ["For-loop"]))
 	gRules.push(new Rule("Statement", ["Do-loop",";"]))
 	gRules.push(new Rule("Statement", ["If"]))
-	gRules.push(new Rule("Statement", ["Return",";"]))
 
 	//Grammar for Variable Declaration
 	gRules.push(new Rule("Var-dec", ["var", "Var-dec'"]));
@@ -957,7 +957,7 @@ function check(lexemes){
 			var replacement = getReplacement(expect);
 			
 			if(lex.type == "\\n"){
-				errors.push("Error on line "+linecounter+". Expecting " + getErrStatement(expect) + " before new line (expansion " + explocator + ")");
+				errors.push("Error on line "+(linecounter-1)+". Expecting " + getErrStatement(expect) + " before new line (expansion " + explocator + ")");
 			}
 			else
 				errors.push("Error on line "+linecounter+". Unexpected token \""+lex.token+"\" of type \""+lex.type+"\". Expecting " + getErrStatement(expect) + " (expansion " + explocator + ")");
@@ -970,7 +970,7 @@ function check(lexemes){
 			while(lastnode.rule.root != lex.token || getNextExpected().rule.root != lex.token){
 
 				// console.log(getNextExpected())
-				console.log(pStart.getText(0))
+			//	console.log(pStart.getText(0))
 				
 				duplicateTree();
 				var seq = checkSubTree(lastnode, lex.token, lex.type)

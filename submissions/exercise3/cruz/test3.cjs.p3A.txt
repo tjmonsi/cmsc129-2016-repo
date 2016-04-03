@@ -1,6 +1,6 @@
 Start
 Main
-Fn-dec
+Fn-def
 Main'
 function
 main
@@ -83,7 +83,7 @@ Main
 newline
 \n
 epsilon
-Fn-dec
+Fn-def
 epsilon
 function
 fibo
@@ -115,7 +115,7 @@ If'
 n
 ID-Exp
 Num-Exp
-Bool'
+Bool
 ==
 Expression
 Number
@@ -157,7 +157,7 @@ If'
 n
 ID-Exp
 Num-Exp
-Bool'
+Bool
 ==
 Expression
 Number

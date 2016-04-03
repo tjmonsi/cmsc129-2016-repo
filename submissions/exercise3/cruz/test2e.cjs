@@ -1,8 +1,8 @@
 function main(){
-	var ar = load("input.file");
+	var ar = load("input.file";
 	var = 0;
-	while(i < arrlen(ar){
+	while( < arrlen(ar){
 		print(ar[i);
-		i = i+1;
+		i = +1;
 	}
 }

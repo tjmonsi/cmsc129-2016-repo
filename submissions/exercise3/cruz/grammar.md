@@ -94,6 +94,7 @@ Production Rules
 |newline|epsilon|
 |Code-Block|/Statement/ /Code-Block/|
 ||/newline/ /Code-Block/|
+||/Return/ ;|
 ||epsilon|
 |Statement|/Var-dec/ ;|
 ||/Asg-Exp/ ;|
@@ -103,7 +104,6 @@ Production Rules
 ||/For-loop/|
 ||/Do-loop/ ;|
 ||/If/|
-||/Return/ ;|
 |Var-dec|var /Var-dec'/|
 |Var-dec'|identifier /Var-dec''/|
 |Var-dec''|epsilon|

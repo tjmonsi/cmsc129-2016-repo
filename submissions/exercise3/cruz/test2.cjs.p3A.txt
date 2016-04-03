@@ -29,7 +29,7 @@ load
 Fn-call'
 (
 Fn-Param
-error recovery
+)
 Expression
 epsilon
 "input.file"
@@ -44,7 +44,7 @@ Var-dec
 ;
 var
 Var-dec'
-error recovery
+i
 Var-dec''
 =
 Expression
@@ -61,13 +61,13 @@ Wh-loop
 while
 (
 Expression
-error recovery
+)
 {
 Code-Block
 }
-Number
+i
+ID-Exp
 Num-Exp
-error recovery
 Bool
 <
 Expression
@@ -103,7 +103,7 @@ Array
 epsilon
 [
 Expression
-error recovery
+]
 epsilon
 i
 epsilon
@@ -119,9 +119,9 @@ i
 Asg-Exp'
 =
 Expression
-Number
+i
+ID-Exp
 Num-Exp
-error recovery
 Math-Exp'
 +
 Math-Exp

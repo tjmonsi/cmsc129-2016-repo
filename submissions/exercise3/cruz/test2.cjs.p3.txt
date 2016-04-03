@@ -29,7 +29,7 @@ Start
 |	|	|	|	|	|	|	|	|	|	|	|	|	|	L string  =>  "input.file"
 |	|	|	|	|	|	|	|	|	|	|	|	|	|	L Num-Exp  =>  epsilon
 |	|	|	|	|	|	|	|	|	|	|	|	|	L Fn-Param'  =>  epsilon
-|	|	|	|	|	|	|	|	|	|	|	|	L )  =>  error recovery
+|	|	|	|	|	|	|	|	|	|	|	|	L )  =>  )
 |	|	|	|	|	|	L ;  =>  ;
 |	|	|	|	|	L Code-Block
 |	|	|	|	|	|	L newline
@@ -40,7 +40,7 @@ Start
 |	|	|	|	|	|	|	|	L Var-dec
 |	|	|	|	|	|	|	|	|	L var  =>  var
 |	|	|	|	|	|	|	|	|	L Var-dec'
-|	|	|	|	|	|	|	|	|	|	L identifier  =>  error recovery
+|	|	|	|	|	|	|	|	|	|	L identifier  =>  i
 |	|	|	|	|	|	|	|	|	|	L Var-dec''
 |	|	|	|	|	|	|	|	|	|	|	L =  =>  =
 |	|	|	|	|	|	|	|	|	|	|	L Expression
@@ -58,24 +58,24 @@ Start
 |	|	|	|	|	|	|	|	|	|	|	L while  =>  while
 |	|	|	|	|	|	|	|	|	|	|	L (  =>  (
 |	|	|	|	|	|	|	|	|	|	|	L Expression
-|	|	|	|	|	|	|	|	|	|	|	|	L Number
-|	|	|	|	|	|	|	|	|	|	|	|	|	L number  =>  error recovery
-|	|	|	|	|	|	|	|	|	|	|	|	L Num-Exp
-|	|	|	|	|	|	|	|	|	|	|	|	|	L Bool
-|	|	|	|	|	|	|	|	|	|	|	|	|	|	L <  =>  <
-|	|	|	|	|	|	|	|	|	|	|	|	|	|	L Expression
-|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L identifier  =>  arrlen
-|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L ID-Exp
-|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L Fn-call'
-|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L (  =>  (
-|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L Fn-Param
-|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L Expression
-|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L identifier  =>  ar
-|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L ID-Exp  =>  epsilon
-|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L Fn-Param'  =>  epsilon
-|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L )  =>  )
-|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L Num-Exp  =>  epsilon
-|	|	|	|	|	|	|	|	|	|	|	L )  =>  error recovery
+|	|	|	|	|	|	|	|	|	|	|	|	L identifier  =>  i
+|	|	|	|	|	|	|	|	|	|	|	|	L ID-Exp
+|	|	|	|	|	|	|	|	|	|	|	|	|	L Num-Exp
+|	|	|	|	|	|	|	|	|	|	|	|	|	|	L Bool
+|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L <  =>  <
+|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L Expression
+|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L identifier  =>  arrlen
+|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L ID-Exp
+|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L Fn-call'
+|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L (  =>  (
+|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L Fn-Param
+|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L Expression
+|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L identifier  =>  ar
+|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L ID-Exp  =>  epsilon
+|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L Fn-Param'  =>  epsilon
+|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L )  =>  )
+|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L Num-Exp  =>  epsilon
+|	|	|	|	|	|	|	|	|	|	|	L )  =>  )
 |	|	|	|	|	|	|	|	|	|	|	L {  =>  {
 |	|	|	|	|	|	|	|	|	|	|	L Code-Block
 |	|	|	|	|	|	|	|	|	|	|	|	L newline
@@ -96,7 +96,7 @@ Start
 |	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L Expression
 |	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L identifier  =>  i
 |	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L ID-Exp  =>  epsilon
-|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L ]  =>  error recovery
+|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L ]  =>  ]
 |	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L Array  =>  epsilon
 |	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L Num-Exp  =>  epsilon
 |	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L Fn-Param'  =>  epsilon
@@ -113,18 +113,18 @@ Start
 |	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L Asg-Exp'
 |	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L =  =>  =
 |	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L Expression
-|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L Number
-|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L number  =>  error recovery
-|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L Num-Exp
-|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L Math-Exp'
-|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L +  =>  +
-|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L Math-Exp
-|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L Term
-|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L Factor
-|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L Number
-|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L number  =>  1
-|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L Term'  =>  epsilon
-|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L Math-Exp'  =>  epsilon
+|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L identifier  =>  i
+|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L ID-Exp
+|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L Num-Exp
+|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L Math-Exp'
+|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L +  =>  +
+|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L Math-Exp
+|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L Term
+|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L Factor
+|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L Number
+|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L number  =>  1
+|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L Term'  =>  epsilon
+|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L Math-Exp'  =>  epsilon
 |	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L ;  =>  ;
 |	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L Code-Block
 |	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L newline

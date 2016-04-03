@@ -1,6 +1,6 @@
 Start
 |	L Main
-|	|	L Fn-dec
+|	|	L Fn-def
 |	|	|	L function  =>  function
 |	|	|	L identifier  =>  main
 |	|	|	L (  =>  (
@@ -29,7 +29,7 @@ Start
 |	|	|	|	|	|	|	|	|	|	|	|	L Fn-Param
 |	|	|	|	|	|	|	|	|	|	|	|	|	L Expression
 |	|	|	|	|	|	|	|	|	|	|	|	|	|	L string  =>  "input.file"
-|	|	|	|	|	|	|	|	|	|	|	|	|	|	L Expression'  =>  epsilon
+|	|	|	|	|	|	|	|	|	|	|	|	|	|	L Num-Exp  =>  epsilon
 |	|	|	|	|	|	|	|	|	|	|	|	|	L Fn-Param'  =>  epsilon
 |	|	|	|	|	|	|	|	|	|	|	|	L )  =>  )
 |	|	|	|	|	|	L ;  =>  ;
@@ -60,7 +60,7 @@ Start
 |	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L number  =>  0
 |	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L Num-Exp  =>  epsilon
 |	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L ]  =>  ]
-|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L Array'  =>  epsilon
+|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L Array  =>  epsilon
 |	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L Num-Exp  =>  epsilon
 |	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L Fn-Param'  =>  epsilon
 |	|	|	|	|	|	|	|	|	|	|	|	|	|	L )  =>  )
@@ -83,7 +83,7 @@ Start
 |	|	|	|	|	L \n  =>  \n
 |	|	|	|	|	L newline  =>  epsilon
 |	|	|	L Main
-|	|	|	|	L Fn-dec
+|	|	|	|	L Fn-def
 |	|	|	|	|	L function  =>  function
 |	|	|	|	|	L identifier  =>  fibo
 |	|	|	|	|	L (  =>  (
@@ -107,7 +107,7 @@ Start
 |	|	|	|	|	|	|	|	|	|	L identifier  =>  n
 |	|	|	|	|	|	|	|	|	|	L ID-Exp
 |	|	|	|	|	|	|	|	|	|	|	L Num-Exp
-|	|	|	|	|	|	|	|	|	|	|	|	L Bool'
+|	|	|	|	|	|	|	|	|	|	|	|	L Bool
 |	|	|	|	|	|	|	|	|	|	|	|	|	L ==  =>  ==
 |	|	|	|	|	|	|	|	|	|	|	|	|	L Expression
 |	|	|	|	|	|	|	|	|	|	|	|	|	|	L Number
@@ -149,7 +149,7 @@ Start
 |	|	|	|	|	|	|	|	|	|	|	L identifier  =>  n
 |	|	|	|	|	|	|	|	|	|	|	L ID-Exp
 |	|	|	|	|	|	|	|	|	|	|	|	L Num-Exp
-|	|	|	|	|	|	|	|	|	|	|	|	|	L Bool'
+|	|	|	|	|	|	|	|	|	|	|	|	|	L Bool
 |	|	|	|	|	|	|	|	|	|	|	|	|	|	L ==  =>  ==
 |	|	|	|	|	|	|	|	|	|	|	|	|	|	L Expression
 |	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L Number

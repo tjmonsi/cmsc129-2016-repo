@@ -19,7 +19,10 @@ Custom Phrase-Level Recovery (Semi-Global Correction)
 2.  A [cjs.p3A.txt] file containing an array (separated by newlines) version of the parse tree.
 
 **Notes:**
-verbose in syn.js should turn off the printing of processes
+1.	'verbose' in syn.js should turn off the printing of processes
+2.	Error test files are test1e.cjs, test2e.cjs, test3e.cjs
+3.	No-error test files are test1.cjs, test2.cjs, test3.cjs
+4.	Error files 1 and 2's parse tree can be corrected, while 3's parse tree is irrecoverable due to consecutive/intense grammatical errors.
 
 Running the script
 -------------
