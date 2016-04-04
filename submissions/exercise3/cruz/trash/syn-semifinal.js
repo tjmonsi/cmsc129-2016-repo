@@ -11,14 +11,12 @@ var verbose = false;
 
 //---[:Classes
 	
-	//For production rules
 	var Rule = function(V, rule){
 		this.id = nextRuleID++;
 		this.root = V;
 		this.rule = rule;
 	}
 
-	//Temporary rule for tree traversal
 	var TRule = function(Rule){
 		this.id = Rule.id;
 		this.root = Rule.root;
@@ -27,7 +25,10 @@ var verbose = false;
 		this.visited = [];	
 	}
 
-	//Nodes that form the parse tree
+	var Traverser = function(){
+		this.visited = [];
+	}
+
 	var ParseNode = function(Rule, parent){
 		this.parent = parent;
 		this.rule = Rule;
@@ -42,7 +43,6 @@ var verbose = false;
 		this.finished = false;
 	}
 
-	//Used for duplicating (backing up) parse tree
 	ParseNode.prototype.newNode = function(node){
 		this.parent = node.parent;
 		this.rule = node.rule;
@@ -52,7 +52,6 @@ var verbose = false;
 		this.finished = node.finished;
 	}
 
-	//Used for printing and saving to file
 	ParseNode.prototype.getText = function(tabs, minimal){
 
 		if(minimal == undefined)
@@ -86,7 +85,6 @@ var verbose = false;
 
 	}
 
-	//Used for getting the array sequence
 	ParseNode.prototype.getArray = function(){
 
 		var text = "";
@@ -137,7 +135,6 @@ var verbose = false;
 
 	}
 
-	//Replaces a node. Used when finalizing a terminal
 	ParseNode.prototype.replace = function(PNode){
 		
 		this.rule = PNode.rule;
@@ -238,7 +235,7 @@ function compile(){
 		{"type":"]","rep":"]"},
 	];
 
-	//Setup Terminal list, makes it easier to know if V or terminal
+	//Setup Terminal list
 	tlist = [
 				"identifier",
 				"number",
@@ -394,7 +391,6 @@ function compile(){
 
 }
 
-//Gets the proper error statement
 function getErrStatement(type){
 
 	for (var i = 0; i < errState.length; i++) {
@@ -406,7 +402,7 @@ function getErrStatement(type){
 
 }
 
-//Gets the replacement for certain error
+
 function getReplacement(type){
 
 	for (var i = 0; i < recovery.length; i++) {
@@ -419,14 +415,24 @@ function getReplacement(type){
 
 }
 
-//Checks if something is a terminal
 function inTerminals(v){
 
 	return tlist.indexOf(v)!=-1
 
 }
 
-//Checks if there exists an epsilon rule for this variable
+//finds a matching Variable rule with epsilon
+function getRuleE(V){
+
+	for (var i = 0; i < gRules.length; i++) {
+//		print((gRules[i].root),V)
+		if(gRules[i].root == V && gRules[i].rule[0] == "epsilon")
+			return gRules[i];
+	}
+	return {"root":V, "rule":null};
+
+}
+
 function hasEpsilon(V){
 	for (var i = 0; i < gRules.length; i++) {
 		if(gRules[i].root == V && gRules[i].rule[0] == "epsilon")
@@ -435,7 +441,6 @@ function hasEpsilon(V){
 	return false;	
 }
 
-//Gets the rule via id
 function getRuleByID(id){
 
 	for (var i = 0; i < gRules.length; i++) {
@@ -446,7 +451,6 @@ function getRuleByID(id){
 
 }
 
-//Gets an array of rules by variable
 function getRulesByVariable(v){
 
 	var rules = [];
@@ -458,7 +462,6 @@ function getRulesByVariable(v){
 
 }
 
-//Check if the node (especially duplicate node) is equal to the real last visited node
 function equalToLast(node){
 
 	var tcur = lastnode;
@@ -475,7 +478,6 @@ function equalToLast(node){
 
 }
 
-//Duplicate a subtree via recursion
 function dupeSub(current){
 
 	var dcur = new ParseNode();
@@ -495,7 +497,6 @@ function dupeSub(current){
 	
 }
 
-//Duplicate the parse tree starting at head then dupeSub its children
 function dupeHead(current){
 
 	dStart = new ParseNode();
@@ -513,7 +514,7 @@ function dupeHead(current){
 
 }
 
-//Backs up tree in case of no suitable placement (for reverting)
+//backs up tree in case of no suitable placement (for reverting)
 //AutoSaved at dStart global
 function duplicateTree(){
 
@@ -524,7 +525,6 @@ function duplicateTree(){
 
 }
 
-//Reverts the parse tree using the duplicate tree
 function revert(){
 
 	pStart = dStart
@@ -532,11 +532,70 @@ function revert(){
 
 }
 
-//Gets the next expected type by checking unfinished nodes
+//the left-most leaf of current subtree
+function getTerminals(current){
+
+	var terminals = [];
+	var cterms = [];
+
+	if(current.terminal)
+		terminals.push(current.rule.root);
+
+	if(!current.children[0].finished){
+
+		cterms = (getTerminals(children[i]));
+
+		while(cterms.length > 0) {
+			terminals.push(cterms.shift());
+		}
+
+	}
+
+	return terminals;
+
+}
+
+//Don't mind this
+//Checks if it has no epsilon
+// function assimilate(current){
+
+// 	if(inTerminals(current.rule.root)){
+
+// 	}
+
+// 	else if(!hasEpsilon(current.rule.root)){
+
+
+// 	}
+
+// }
+
+// function getExpected(){
+
+// 	var expected = [];
+// 	var current = lastnode;
+
+// 	while(true){
+
+// 		current = current.parent;
+
+// 		for (var i = 0; i < current.children.length; i++) {
+			
+// 			var child = current.children[i]; 
+// 			if(!child.finished){}
+
+// 		}
+
+// 	}
+
+
+// }
+
 function getNextExpected(){
 
 	var current = lastnode;
 	var finished = current.finished;
+//	print("Current",current)
 
 	do{
 
@@ -586,7 +645,6 @@ function getNextExpected(){
 
 }
 
-//Checks the subtree for the next type
 function checkSubTree(current, type, value){
 
 	//If found, use this subtree
@@ -595,21 +653,24 @@ function checkSubTree(current, type, value){
 	if(current.finished)
 		current = current.parent;
 
-	//If there is no children, immediately generate a sequence until this point
 	if(current.children.length == 0){
 		print("==NO CHILDREN==\n---Immediately returning generated sequence---")
 		return generateSequence(current, type);
 	}
 
 	do{
+//		
+		
+		// current.spot = "asd";
+		// print(pStart.getText(0));
+		// current.spot = undefined;
 
-		//Check each children
 		for (var i = 0; i < current.children.length; i++) {
 			
 			var child = current.children[i]
 			if(!child.finished){
+//				print("Child", child)
 
-				//If the child matches the current type immediately use this type
 				if(child.terminal && child.value == null){
 					if(child.rule.root == type){
 						child.value = value;
@@ -619,19 +680,19 @@ function checkSubTree(current, type, value){
 					}
 				}
 
-				//If the child has no epsilon rule, immediately generate a sequence on this rule
 				if(!hasEpsilon(child.rule.root)){
 					print("==NO EPSILON==\n---Immediately returning generated sequence---")
 					return generateSequence(child, type);
 				}
 
-				//Try generating a sequence
+				//Place if there is a way (Greedy Algorithm)
 				var seq = generateSequence(child, type);
 				if(seq != null){
 					return seq;
 				}
 
 				//If there's no way, use epsilon rule and go up one level.
+//				print(child.parent)
 				child.value = "epsilon";
 				child.finished = true;
 						
@@ -642,10 +703,12 @@ function checkSubTree(current, type, value){
 		current.finished = true;
 		current = current.parent;
 
+		
 	}while(current.rule.root != "Start");
 
-	//Revert to duplicate if no matching rule if found
+	//Revert to duplicate
 		print("<WARNING::No More Parent>")
+		// print(pStart.getText(0))
 		print("--Reverting--")
 		revert();
 		print("--Reverted--")
@@ -662,10 +725,12 @@ function generateSequence(current, type){
 	var seq = [];
 	var next = [new TRule(current.rule)];
 
-	//Using TRule class, generate a direct path to the terminal
 	while(true){
+		//print("type",type)
 
+		// print("generateSequence-next::\n",next)	
 		current = next.shift();
+		// print("generateSequence-current::\n",current)
 		current.visited.push(current.id);
 		
 		if(current.rule == null){
@@ -684,6 +749,7 @@ function generateSequence(current, type){
 			//BAD EXIT
 			if(next.length == 0){
 				print("<WARNING::No matching rules>")
+				// errors.push("Error on line "+linecounter+". Expecting " + getErrStatement(expected));
 				print("--Trying to check for valid subtrees--");
 				return null;
 			}
@@ -694,9 +760,12 @@ function generateSequence(current, type){
 		if(current.rule.indexOf(type) != -1)
 			break;
 
+		// for (var k = 0; k < current.rule.length; k++) {
 			var roots = getRulesByVariable(current.rule[0]);
+			// print(roots)
 			for (var i = 0; i < roots.length; i++) {
 				var n = new TRule(roots[i]);
+	//			print(current.visited, n.id)
 				if(current.visited.indexOf(n.id)==-1){
 					for (var j = 0; j < current.visited.length; j++) {
 						n.visited.push(current.visited[j])
@@ -706,16 +775,19 @@ function generateSequence(current, type){
 				}
 			}
 
+		// }	
 		//BAD EXIT
 		if(next.length == 0){
 			print("<WARNING::No matching rules>")
+//			print("Current",current)
 			expect = expected;
+			//if(!hasEpsilon(expected))	//Only report those without epsilons
 			print("--Trying to check for valid subtrees--");
 			return null;
 		}
 	}
 
-	//When a rule is found, create the sequence by reversing the path from the current (last node)
+
 	if(current.rule[0] == type){
 		
 		//trace back up
@@ -726,45 +798,50 @@ function generateSequence(current, type){
 
 	}
 
-	//If there were no paths generated
 	if(seq.length == 0){
+		
 		print("<WARNING::No paths generated>")
+		// errors.push("Error on line "+linecounter+". Expecting " + getErrStatement(expected));
 		return null;	
+
 	}
 
+	// print(seq)
 	return seq;
 
 }
 
-//Expands the main parse tree by using the last node (current), the sequence, the type, and the token (for placement)
 function expand(current, sequence, type, token){
 	
-	//go up to the unfinished parent node first
+	// print(current)
+	// print(sequence)
+
 	if(current.parent != undefined)
 		while(current.parent.finished)
 			current = current.parent
-
+		
 	if(current.finished){
 		//Match node's root via siblings
 		//check siblings for match
 		var parent = current.parent;
 		var siblings = parent.children;
 		for (var i = 0; i < siblings.length; i++) {
+			// print("sibling",siblings[i])
+			// print("seq", sequence[0])
 			if(siblings[i].rule.id == sequence[0].prev.id){
 				current = siblings[i];
 				break;
 			}
 		}
+		// print(current)
 	}
 
 	var nextrule; //dequeue starting point
-	//Create nodes via sequence
 	while(sequence.length > 0){
 
 		nextrule = sequence.shift();
 		current.replace(new ParseNode(getRuleByID(nextrule.id), current.parent));
 		
-		//Use a null Rule (nRule) for finishing nodes
 		for (var i = 0; i < nextrule.rule.length; i++) {
 			
 			var fl = false;
@@ -794,7 +871,6 @@ function expand(current, sequence, type, token){
 
 	}
 
-	//set the last node's terminal
 	current.terminal = inTerminals(type);
 	current.rule = {"root":type, "rule":null}
 	current.value = token;
@@ -808,7 +884,7 @@ function expand(current, sequence, type, token){
 function expandFor(type, token){
 
 	expect = null;
-	explocator++;	//debugging purpose
+	explocator++;
 
 	//Get current node; check if terminal
 		//True: check if type matches terminal
@@ -825,18 +901,21 @@ function expandFor(type, token){
 	print("========================")
 	print(explocator+" [Expanding type] " + type + " => " + token)
 	print("========================")
-
+	// print("[Last Node]-------------")
+	// print(current)
 	print("[Duplication/Backup]----")
 	duplicateTree();
-
+	// print("[Duplicated Parse Tree]-")
+	// dStart.print(0);
 	print("[Check Validity]--------")
 	var sequence = checkSubTree(current, type, token)
+	
+	// print(sequence)
+	// print("Error List:",errors)
 	
 	if(sequence == "match"){	//the lexeme matched the next terminal
 		return [""];
 	}
-	
-	//If there was no sequence generated
 	if(sequence == null || sequence == undefined){
 		print("==Recovery==")
 		return ["R"];
@@ -848,13 +927,12 @@ function expandFor(type, token){
 
 }
 
-//Check lexemes then try to expand parse tree per incoming type
+//Uses a parse tree for checking correct placements
 function check(lexemes){
 
 	for (var i = 0; i < lexemes.length; i++) {
 		
 		var lex = lexemes[i];
-		//skip the space/tab
 		if(lex.type == "\\s")
 			continue;
 
@@ -864,16 +942,16 @@ function check(lexemes){
 		
 		var result = expandFor(lex.type, lex.token);
 
-		//Recovery block
 		if(result[0] == "R"){
 
-			//No more lines to check for
+			if(lex.type != "unknown")
+
+
 			if(i == lexemes.length){
 				print("<ERROR::Recovery impossible; no more succeeding lines>");
 				return {"statement":"\n=======================\nFailed to compile.\n", "code":2}	
 			}
 			
-			//check for expected and get replacement
 			expect = getNextExpected().rule.root;
 			print("Expected: " + expect)
 			var replacement = getReplacement(expect);
@@ -884,15 +962,18 @@ function check(lexemes){
 			else
 				errors.push("Error on line "+linecounter+". Unexpected token \""+lex.token+"\" of type \""+lex.type+"\". Expecting " + getErrStatement(expect) + " (expansion " + explocator + ")");
 			
-			//expand using replacement for error recovery
 			expandFor(replacement, "error recovery");
+			//console.log(pStart.getText(0))
 
-			var first = true;	//flag for not repeating error print
+			var first = true;
 			var lastdupe = lastnode;
 			while(lastnode.rule.root != lex.token || getNextExpected().rule.root != lex.token){
+
+				// console.log(getNextExpected())
+			//	console.log(pStart.getText(0))
 				
-				duplicateTree();	//backup for testing
-				var seq = checkSubTree(lastnode, lex.token, lex.type)	//check if the next token can fix the tree
+				duplicateTree();
+				var seq = checkSubTree(lastnode, lex.token, lex.type)
 				if(seq == "match"){
 					break;
 				}
@@ -901,9 +982,8 @@ function check(lexemes){
 					break;
 				}
 
-				//if the next token cannot, print the next token as suberror
+
 				var temtok = lex.token;
-				//skip the space/tab
 				if(lex.type == "\\s"){
 					i++;
 				
@@ -916,7 +996,6 @@ function check(lexemes){
 					continue;
 				}
 
-				//newline adds the linecounter
 				if(lex.type == "\\n"){
 					linecounter++;
 					temtok = lex.type;
@@ -944,6 +1023,9 @@ function check(lexemes){
 
 		print("[Parse Tree]------------")
 		print(pStart.getText(0))
+	
+		// if(i > 8)
+		// 	break;
 			
 	}
 
@@ -953,7 +1035,6 @@ function check(lexemes){
 	final.value = "epsilon";
 	final.finished = true;
 
-	//print the final parse tree regardless of verbose flag
 	console.log("========================")
 	console.log("Final Parse Tree")
 	console.log("========================")
@@ -962,13 +1043,24 @@ function check(lexemes){
 	if(errors.length > 0)
 		return {"statement":"\n=======================\nCompilation successful with "+errors.length+" syntax error(s).\n", "code":1}
 		
-	return {"statement":"\n=======================\nCompilation successful with no syntax errors.\n", "code":1}
+	return {"statement":"\n=======================\nCompilation successful.\n", "code":1}
 	
+}
+
+function getRulesByTerminal(t){
+
+	var rules = [];
+	for (var i = 0; i < gRules.length; i++) {
+		if(gRules[i].rule[0] == t)
+			rules.push(gRules[i]);
+	}
+	return rules;
+
 }
 
 //The main program after compiling using lex.js
 function start(){
-		
+	
 	print(lexemes)
 
 	var result = check(lexemes)
@@ -985,5 +1077,5 @@ function start(){
 
 //---]
 
-compile();
 main();
+compile();

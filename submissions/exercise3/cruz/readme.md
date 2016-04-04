@@ -8,8 +8,14 @@ The **syn.js** is a javascript implementation of a lexical analyzer with syntax 
 Specifications
 -------------
 
+**Parsing**
+The Top-down parsing algorithm uses greedy traversal.
+> * If the next node's rule is epsilon, allow skipping it if no rules were made
+> * If the next node's is terminal and it matches the next lexeme type, use it.
+> * If the next node's rule is not epsilon and terminal, the type must be able to produce a rule sequence to a terminal, else it becomes an error.
+
 **Error-Handling**
-Custom Phrase-Level Recovery (Semi-Global Correction)
+Custom Phrase-Level Recovery (Greedy Correction)
 > * Corrects parse tree by changing incorrect tokens based on first matching grammar rules.
 > * In some cases, recovery is impossible due to only focusing on first matching grammar rule.
 > * Lists sub-errors that may be caused by the first syntax error found.
