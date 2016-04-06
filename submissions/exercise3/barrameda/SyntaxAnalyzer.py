@@ -48,6 +48,10 @@ class Node():
             self.lookahead()
             self.varDec()
 
+        if self.nextLexeme.label == 'if':
+            self.lookahead()
+            self.ifcond()
+
         if self.operand():
             if self.expression():
                 True
@@ -66,11 +70,19 @@ class Node():
             self.parseError('Expected \';\' at line '+str(self.prevLexeme.lineNumber))
         return
 
+    def ifcond(self):
+        if self.nextLexeme.label == '{':
+            self.lookahead()
+        else:
+            self.parseError('Expected \'{\' at line '+str(self.prevLexeme.lineNumber))
+        return
+
     def expression(self):
         if not self.operand():
             return False
         if self.operation():
-            True
+            if self.nextLexeme.label != ';':
+                self.parseError('Expected \';\' at line '+str(self.prevLexeme.lineNumber))
         return True
 
     def operation(self):
@@ -78,21 +90,29 @@ class Node():
             self.lookahead()
             if self.nextLexeme.label in ['+', '-', '*', '/', '%']:
                 self.lookahead()
-                if self.operand():
-                    self.lookahead()
-                    if self.nextLexeme.label == ';':
+                if not self.operation():
+                    if self.operand():
                         self.lookahead()
+                        return True
                     else:
-                        self.parseError('Expected \';\' at line '+str(self.prevLexeme.lineNumber))
-                    return True
+                        self.parseError('Invalid operation syntax at line'+str(self.prevLexeme.lineNumber))
+                        self.backtrack()
                 else:
-                    self.backtrack()
+                    return True
             else:
                 self.backtrack()
+        if self.nextLexeme.label == '(':
+            self.lookahead()
+            if self.operation():
+                if self.nextLexeme.label == ')':
+                    self.lookahead()
+                    return True
+                else:
+                    self.parseError('Expected \')\' at line'+str(self.nextLexeme.lineNumber))
         return False
 
     def operand(self):
-        if self.nextLexeme.label in ['Integer Literal', 'Float Literal', 'String Literal', 'Variable Identifier']:
+        if self.nextLexeme.label in ['Integer Literal', 'Float Literal', 'String Literal', 'Variable Identifier', '(']:
             return True
         return False
 
