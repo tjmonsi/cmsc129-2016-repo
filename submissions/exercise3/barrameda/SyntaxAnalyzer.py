@@ -51,6 +51,15 @@ class Node():
         elif self.nextLexeme.label == 'if':
             self.lookahead()
             self.ifcond()
+            self.lookahead()
+            if self.nextLexeme.label == 'else':
+                self.lookahead()
+                self.elsecond()
+            else:
+                self.backtrack()
+        elif self.nextLexeme.label == 'for':
+            self.lookahead()
+            self.forLoop()
         elif self.operand():
             self.expression()
         return
@@ -76,7 +85,7 @@ class Node():
                 else:
                     self.parseError('Expected \')\' at line '+str(self.nextLexeme.lineNumber))
             else:
-                self.parseError('Expected condition for if-condition at line '+str(ifIndex))
+                self.parseError('Expected boolean condition for if-condition at line '+str(ifIndex))
             if self.nextLexeme.label == '{':
                 self.lookahead()
                 while self.nextLexeme.label != '}':
@@ -90,6 +99,66 @@ class Node():
         else:
             self.parseError('Expected \'(\' for if-condition at line '+str(ifIndex))
 
+        self.lookahead()
+        if self.nextLexeme.label == 'elsif':
+            self.lookahead()
+            self.ifcond()
+        else:
+            self.backtrack()
+
+        return
+
+    def elsecond(self):
+        elseIndex = self.prevLexeme.lineNumber
+        if self.nextLexeme.label == '{':
+            self.lookahead()
+            while self.nextLexeme.label != '}':
+                if self.index == len(self.lexemes):
+                    self.parseError('Expected \'}\' for else-conditon at line '+str(elseIndex))
+                    return
+                self.statement()
+                self.lookahead()
+        else:
+            self.parseError('Expected \'{\' for else-conditon at line '+str(elseIndex))
+        return
+
+    def forLoop(self):
+        forIndex = self.prevLexeme.lineNumber
+        if self.nextLexeme.label == '(':
+            self.lookahead()
+            if self.booleanOp():
+                if self.nextLexeme.label == ';':
+                    self.lookahead()
+                    if self.booleanOp():
+                        if self.nextLexeme.label == ';':
+                            self.lookahead()
+                            if self.booleanOp():
+                                if self.nextLexeme.label == ')':
+                                    self.lookahead()
+                                else:
+                                    self.parseError('Expected \')\' at line '+str(self.nextLexeme.lineNumber))
+                            else:
+                                self.parseError('Expected expression for argument 3 in for condition at line '+str(forIndex))
+                        else:
+                             self.parseError('Expected \';\' after argument 2 in for condition at line '+str(forIndex))
+                    else:
+                        self.parseError('Expected boolean for argument 2 in for condition at line '+str(forIndex))
+                else:
+                     self.parseError('Expected \';\' after argument 1 in for condition at line '+str(forIndex))
+            else:
+                self.parseError('Expected expression for argument 1 in for condition at line '+str(forIndex))
+            if self.nextLexeme.label == '{':
+                self.lookahead()
+                while self.nextLexeme.label != '}':
+                    if self.index == len(self.lexemes):
+                        self.parseError('Expected \'}\' for if-conditon at line '+str(forIndex))
+                        return
+                    self.statement()
+                    self.lookahead()
+            else:
+                self.parseError('Expected \'{\' for if-conditon at line '+str(forIndex))
+        else:
+            self.parseError('Expected \'(\' for for-loop at line '+str(forIndex))
         return
 
     def expression(self):
@@ -156,7 +225,7 @@ class Node():
                     return True
                 else:
                     self.parseError('Expected \')\' at line'+str(self.nextLexeme.lineNumber))
-                    
+
         if self.boolean():
             self.lookahead()
             return True
