@@ -4,8 +4,9 @@ func !main() {
 	if (true and false){
 	1+1;
 	}
-	for(true;true;true) {
-	
+	for(!wow=0;true;!wow=!wow+2) {
+
 	}
 	print("Hello World!")
 	return 0
+}

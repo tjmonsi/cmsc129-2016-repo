@@ -75,6 +75,20 @@ class Node():
 
         return
 
+    def assign(self):
+        if self.nextLexeme.label == 'Variable Identifier':
+            self.lookahead()
+            if self.nextLexeme.label == '=':
+                self.lookahead()
+                if self.operation():
+                    return True
+                elif self.operand():
+                    self.lookahead()
+                    return True
+                else:
+                    self.backtrack()
+        return False
+
     def ifcond(self):
         ifIndex = self.prevLexeme.lineNumber
         if self.nextLexeme.label == '(':
@@ -126,13 +140,13 @@ class Node():
         forIndex = self.prevLexeme.lineNumber
         if self.nextLexeme.label == '(':
             self.lookahead()
-            if self.booleanOp():
+            if self.assign():
                 if self.nextLexeme.label == ';':
                     self.lookahead()
                     if self.booleanOp():
                         if self.nextLexeme.label == ';':
                             self.lookahead()
-                            if self.booleanOp():
+                            if self.assign():
                                 if self.nextLexeme.label == ')':
                                     self.lookahead()
                                 else:
