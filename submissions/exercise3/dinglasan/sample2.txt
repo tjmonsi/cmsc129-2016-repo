@@ -1,0 +1,8 @@
+simula;
+	numero i;
+	habang(masmaliit(i,10));
+		kung(parehas(modyulo(i,2),0));
+			plas(i,2);
+		eKung(masmalaki(i,5)); 
+			plas(i,1);			
+tapos;

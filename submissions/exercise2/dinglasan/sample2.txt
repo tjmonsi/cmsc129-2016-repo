@@ -1,0 +1,8 @@
+simula:
+	numero i, a[10];
+	payl("something_file.txt");
+
+	por(i=0; masmaliit(i,10); plas(i,1)):
+		ikuha(a[i]);
+		isulat(a[i]);
+tapos;
