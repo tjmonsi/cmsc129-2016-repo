@@ -67,6 +67,9 @@ class Node():
         elif self.nextLexeme.label == 'func':
             self.lookahead()
             self.funcDec()
+        elif self.nextLexeme.label == 'call':
+            self.lookahead()
+            self.funcCall()
         elif self.operand():
             self.expression()
         return
@@ -241,6 +244,33 @@ class Node():
                 self.contentBlock('function-declaration', funcIndex)
             else:
                 self.parseError('Expected \'(\' for function declaration at line '+str(funcIndex))
+        return
+
+    def funcCall(self):
+        callIndex = self.prevLexeme.lineNumber
+        if self.nextLexeme.label == 'Variable Identifier':
+            self.lookahead()
+            if self.nextLexeme.label == '(':
+                self.lookahead()
+                while self.nextLexeme.label != ')':
+                    if self.operation():
+                        if self.nextLexeme.label == ',':
+                            self.lookahead()
+                    elif self.operand():
+                        self.lookahead()
+                        if self.nextLexeme.label == ',':
+                            self.lookahead()
+                    else:
+                        self.parseError('Invalid argument for function call at line '+str(callIndex))
+                        while self.nextLexeme.label not in [',', ')']:
+                            self.lookahead()
+                self.lookahead()
+                if self.nextLexeme.label == ';':
+                    self.lookahead()
+                else:
+                    self.parseError('Expected \';\' at line '+str(callIndex))
+            else:
+                self.parseError('Expected \'(\' for function call at line '+str(callIndex))
         return
 
     def expression(self):
