@@ -262,7 +262,6 @@ class Parser():
 dfa = lexical_analyzer.create_DFA()
 code = open('sample.ric', 'r').read().strip()
 lexemes = dfa.tokenize(code)
-lexemes = dfa.tokenize('')
 print(lexemes)
 parser = Parser()
 parser.parse(lexemes)
