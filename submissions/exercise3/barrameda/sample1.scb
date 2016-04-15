@@ -1,11 +1,8 @@
-func !main() {
+func !main($wow) {
 	new !wow;
 	(1+1+1);
 	if (true and false){
 	1+1;
-	}
-	for(!wow=0;true;!wow=!wow+2) {
-
 	}
 	print("Hello World!")
 	return 0

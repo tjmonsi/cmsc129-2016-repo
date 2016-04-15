@@ -89,6 +89,7 @@ def initDFA():
 	dfa.addBranch(keywordTF(']', dfa))
 	dfa.addBranch(keywordTF('{', dfa))
 	dfa.addBranch(keywordTF('}', dfa))
+	dfa.addBranch(keywordTF(',', dfa))
 	dfa.addBranch(keywordTF(';', dfa))
 	dfa.addBranch(keywordTF('=', dfa))
 	dfa.addBranch(keywordTF('+', dfa))

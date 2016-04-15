@@ -27,8 +27,6 @@ class Node():
         return
 
     def parse(self):
-        #if token in PTree.grammar:
-        #    print("wow")
         self.codeblock()
         return
 
@@ -60,6 +58,15 @@ class Node():
         elif self.nextLexeme.label == 'for':
             self.lookahead()
             self.forLoop()
+        elif self.nextLexeme.label == 'while':
+            self.lookahead()
+            self.whileLoop()
+        elif self.nextLexeme.label == 'do':
+            self.lookahead()
+            self.doLoop()
+        elif self.nextLexeme.label == 'func':
+            self.lookahead()
+            self.funcDec()
         elif self.operand():
             self.expression()
         return
@@ -89,6 +96,20 @@ class Node():
                     self.backtrack()
         return False
 
+    def contentBlock(self, name, index):
+        if self.nextLexeme.label == '{':
+            self.lookahead()
+            while self.nextLexeme.label != '}':
+                if self.index == len(self.lexemes):
+                    self.parseError('Expected \'}\' for '+name+' at line '+str(index))
+                    return False
+                self.statement()
+                self.lookahead()
+        else:
+            self.parseError('Expected \'{\' for '+name+' at line '+str(index))
+            return False
+        return True
+
     def ifcond(self):
         ifIndex = self.prevLexeme.lineNumber
         if self.nextLexeme.label == '(':
@@ -100,16 +121,8 @@ class Node():
                     self.parseError('Expected \')\' at line '+str(self.nextLexeme.lineNumber))
             else:
                 self.parseError('Expected boolean condition for if-condition at line '+str(ifIndex))
-            if self.nextLexeme.label == '{':
-                self.lookahead()
-                while self.nextLexeme.label != '}':
-                    if self.index == len(self.lexemes):
-                        self.parseError('Expected \'}\' for if-conditon at line '+str(ifIndex))
-                        return
-                    self.statement()
-                    self.lookahead()
-            else:
-                self.parseError('Expected \'{\' for if-conditon at line '+str(ifIndex))
+            if not self.contentBlock('if-condition', ifIndex):
+                return
         else:
             self.parseError('Expected \'(\' for if-condition at line '+str(ifIndex))
 
@@ -161,18 +174,73 @@ class Node():
                      self.parseError('Expected \';\' after argument 1 in for condition at line '+str(forIndex))
             else:
                 self.parseError('Expected expression for argument 1 in for condition at line '+str(forIndex))
-            if self.nextLexeme.label == '{':
-                self.lookahead()
-                while self.nextLexeme.label != '}':
-                    if self.index == len(self.lexemes):
-                        self.parseError('Expected \'}\' for if-conditon at line '+str(forIndex))
-                        return
-                    self.statement()
-                    self.lookahead()
-            else:
-                self.parseError('Expected \'{\' for if-conditon at line '+str(forIndex))
+            if not self.contentBlock('for-loop', forIndex):
+                return
         else:
             self.parseError('Expected \'(\' for for-loop at line '+str(forIndex))
+        return
+
+    def whileLoop(self):
+        whileIndex = self.prevLexeme.lineNumber
+        if self.nextLexeme.label == '(':
+            self.lookahead()
+            if self.booleanOp():
+                if self.nextLexeme.label == ')':
+                    self.lookahead()
+                else:
+                    self.parseError('Expected \')\' at line '+str(self.nextLexeme.lineNumber))
+            else:
+                self.parseError('Expected boolean condition for while-loop at line '+str(whileIndex))
+            if not self.contentBlock('while-loop', whileIndex):
+                return
+        else:
+            self.parseError('Expected \'(\' for while-loop at line '+str(whileIndex))
+        return
+
+    def doLoop(self):
+        doIndex = self.prevLexeme.lineNumber
+        if self.contentBlock('do-while-loop', doIndex):
+            self.lookahead()
+            if self.nextLexeme.label == 'while':
+                self.lookahead()
+                if self.nextLexeme.label == '(':
+                    self.lookahead()
+                    if self.booleanOp():
+                        if self.nextLexeme.label == ')':
+                            self.lookahead()
+                        else:
+                            self.parseError('Expected \')\' at line '+str(self.nextLexeme.lineNumber))
+                    else:
+                        self.parseError('Expected boolean condition for do-while-loop at line '+str(doIndex))
+                    if self.nextLexeme.label == ";":
+                        self.lookahead()
+                    else:
+                        self.parseError('Expected \';\' at line '+str(self.prevLexeme.lineNumber))
+                else:
+                    self.parseError('Expected \'(\' for do-while-loop at line '+str(doIndex))
+            else:
+                self.parseError('Expected while part for do-while-loop at line '+str(doIndex))
+        return
+
+    def funcDec(self):
+        funcIndex = self.prevLexeme.lineNumber
+        if self.nextLexeme.label == 'Variable Identifier':
+            self.lookahead()
+            if self.nextLexeme.label == '(':
+                self.lookahead()
+                while self.nextLexeme.label != ')':
+                    if self.nextLexeme.label == 'Variable Identifier':
+                        self.lookahead()
+                        if self.nextLexeme.label == ',':
+                            self.lookahead()
+                    else:
+                        self.parseError('Invalid argument for function declaration at line '+str(funcIndex))
+                        while self.nextLexeme.label not in [',', ')']:
+                            self.lookahead()
+                self.lookahead()
+                self.contentBlock('function-declaration', funcIndex)
+            else:
+                self.parseError('Expected \'(\' for function declaration at line '+str(funcIndex))
         return
 
     def expression(self):
