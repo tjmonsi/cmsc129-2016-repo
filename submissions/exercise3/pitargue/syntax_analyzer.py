@@ -9,7 +9,7 @@ class Parser():
     def nextLexeme(self):
         if self.lexemes:
             self.lookahead = self.lexemes.pop(0)
-            print(self.lookahead[1])
+            #print(self.lookahead[1])
             
     def assert_next(self, expected_value, error_message):
         if self.lookahead[0] == expected_value:
@@ -204,12 +204,6 @@ class Parser():
         self.nextLexeme()
         self.assert_delimiter()
 
-    def parseExpression(self, lexemes):
-        self.lexemes = lexemes
-        self.nextLexeme()
-        while self.lexemes:
-            self.expression()
-
     def expression(self):
         self.operation()
     
@@ -267,9 +261,8 @@ class Parser():
 
 dfa = lexical_analyzer.create_DFA()
 code = open('sample.ric', 'r').read().strip()
-#lexemes = dfa.tokenize(code)
+lexemes = dfa.tokenize(code)
 lexemes = dfa.tokenize('')
 print(lexemes)
 parser = Parser()
-#parser.parse(lexemes)
-parser.parseExpression(lexemes)
+parser.parse(lexemes)
