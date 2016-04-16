@@ -49,6 +49,9 @@ class Node():
         elif self.nextLexeme.label == 'print':
             self.lookahead()
             self.output()
+        elif self.nextLexeme.label == 'scan':
+            self.lookahead()
+            self.input()
         elif self.nextLexeme.label == 'if':
             self.lookahead()
             self.ifcond()
@@ -186,6 +189,33 @@ class Node():
                 self.parseError('Invalid argument for print function at line '+str(self.prevLexeme.lineNumber))
         else:
             self.parseError('Expected \'(\' for print function at line '+str(self.prevLexeme.lineNumber))
+        return
+
+    def input(self):
+        if self.nextLexeme.label == '(':
+            self.lookahead()
+            if self.nextLexeme.label == 'Variable Identifier':
+                self.lookahead()
+                if self.nextLexeme.label == ',':
+                    self.lookahead()
+                    if self.nextLexeme.label in ['String Literal', 'Variable Identifier']:
+                        self.lookahead()
+                        if self.nextLexeme.label == ')':
+                            self.lookahead()
+                        else:
+                            self.parseError('Expected \')\' at line '+str(self.prevLexeme.lineNumber))
+
+                        if self.nextLexeme.label != ';':
+                            self.parseError('Expected \';\' at line '+str(self.prevLexeme.lineNumber))
+                    else:
+                        self.parseError('Expected string argument for scan function at line '+str(self.prevLexeme.lineNumber))
+                else:
+                    self.parseError('Invalid argument count for scan function at line '+str(self.prevLexeme.lineNumber))
+            else:
+                self.parseError('Expected variable argument for scan function at line '+str(self.prevLexeme.lineNumber))
+        else:
+            self.parseError('Expected \'(\' for scan function at line '+str(self.prevLexeme.lineNumber))
+        return
         return
 
     def contentBlock(self, name, index):
