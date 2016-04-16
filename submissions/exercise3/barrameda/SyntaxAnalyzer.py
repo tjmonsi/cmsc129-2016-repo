@@ -265,9 +265,7 @@ class Node():
                         while self.nextLexeme.label not in [',', ')']:
                             self.lookahead()
                 self.lookahead()
-                if self.nextLexeme.label == ';':
-                    self.lookahead()
-                else:
+                if self.nextLexeme.label != ';':
                     self.parseError('Expected \';\' at line '+str(callIndex))
             else:
                 self.parseError('Expected \'(\' for function call at line '+str(callIndex))
@@ -291,7 +289,7 @@ class Node():
                         self.lookahead()
                         return True
                     else:
-                        self.parseError('Invalid operation syntax at line'+str(self.prevLexeme.lineNumber))
+                        self.parseError('Invalid operation syntax at line '+str(self.prevLexeme.lineNumber))
                         self.backtrack()
                 else:
                     return True
@@ -313,6 +311,7 @@ class Node():
         return False
 
     def booleanOp(self):
+        save = self.index
         if self.boolean():
             self.lookahead()
             if self.nextLexeme.label in ['and', 'or']:
@@ -338,6 +337,7 @@ class Node():
                 else:
                     self.parseError('Expected \')\' at line'+str(self.nextLexeme.lineNumber))
 
+        self.index = save
         if self.boolean():
             self.lookahead()
             return True
@@ -346,6 +346,16 @@ class Node():
     def boolean(self):
         if self.nextLexeme.label in ['true', 'false', 'Variable Identifier', '(']:
             return True
+        elif self.operand():
+            self.lookahead()
+            if self.nextLexeme.label in ['==', '>', '<', '>=', '<=']:
+                self.lookahead()
+                if not self.operation():
+                    if self.operand():
+                        return True
+                    else:
+                        self.parseError('Invalid boolean syntax at line '+str(self.prevLexeme.lineNumber))
+                        self.backtrack()
         return False
 
 def parser(tokens):
