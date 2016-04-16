@@ -1,6 +1,5 @@
 func !main(!wow) {
 	new !wow[3];
-	scan(!wow, "wow");
 	call !main(1+2+3);
 	if (1>2){
 	1+1;

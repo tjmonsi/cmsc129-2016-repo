@@ -76,8 +76,8 @@ class Node():
         elif self.nextLexeme.label == 'call':
             self.lookahead()
             self.funcCall()
-        elif self.operand():
-            self.expression()
+        elif self.expression():
+            self.lookahead()
         return
 
     def varDec(self):
@@ -97,6 +97,7 @@ class Node():
                     self.parseError('Expected \']\' for array declaration at line '+str(self.prevLexeme.lineNumber))
             if self.nextLexeme.label != ';':
                 self.parseError('Expected \';\' at line '+str(self.prevLexeme.lineNumber))
+                self.backtrack()
         else:
             self.parseError('Expected Variable Identifier at line '+str(self.prevLexeme.lineNumber))
 
@@ -132,7 +133,13 @@ class Node():
                             if not self.operation():
                                 if not self.operand():
                                     self.parseError('Expected \'int\' for splice function at line '+str(self.prevLexeme.lineNumber))
-                                self.lookahead()
+                                else:
+                                    self.lookahead()
+                                    if self.nextLexeme.label == ')':
+                                        self.lookahead()
+                                        return True
+                                    else:
+                                        self.parseError('Expected \')\' at line '+str(self.prevLexeme.lineNumber))
                         else:
                             self.parseError('Invalid argument count for splice function at line '+str(self.prevLexeme.lineNumber))
                 else:
@@ -141,7 +148,7 @@ class Node():
                 self.parseError('Expected String for splice function at line '+str(self.prevLexeme.lineNumber))
         else:
             self.parseError('Expected \'(\' for splice function at line '+str(self.prevLexeme.lineNumber))
-        return
+        return False
 
     def concat(self):
         if self.nextLexeme.label == '(':
@@ -154,8 +161,9 @@ class Node():
                         self.lookahead()
                         if self.nextLexeme.label == ')':
                             self.lookahead()
+                            return True
                         else:
-                            self.parseError('Expected \')\' at line '+str(self.nextLexeme.lineNumber))
+                            self.parseError('Expected \')\' at line '+str(self.prevLexeme.lineNumber))
                     else:
                         self.parseError('Invalid argument 2 for concat function at line '+str(self.prevLexeme.lineNumber))
                 else:
@@ -164,21 +172,29 @@ class Node():
                 self.parseError('Invalid argument 1 for concat function at line '+str(self.prevLexeme.lineNumber))
         else:
             self.parseError('Expected \'(\' for concat function at line '+str(self.prevLexeme.lineNumber))
-        return
-        return
 
-    def output(self):
+        return False
+
+    def length(self):
         if self.nextLexeme.label == '(':
             self.lookahead()
             if self.nextLexeme.label in ['String Literal', 'Variable Identifier']:
                 self.lookahead()
                 if self.nextLexeme.label == ')':
                     self.lookahead()
+                    return True
                 else:
-                    self.parseError('Expected \')\' at line '+str(self.nextLexeme.lineNumber))
+            else:
+                self.parseError('Invalid argument for length function at line '+str(self.prevLexeme.lineNumber))
+        else:
+            self.parseError('Expected \'(\' for length function at line '+str(self.prevLexeme.lineNumber))
+        return False
 
-                if self.nextLexeme.label != ';':
-                    self.parseError('Expected \';\' at line '+str(self.prevLexeme.lineNumber))
+    def output(self):
+        if self.nextLexeme.label == '(':
+            self.lookahead()
+            if self.nextLexeme.label in ['String Literal', 'Variable Identifier']:
+                self.lookahead()
             elif self.nextLexeme.label == 'concat':
                 self.lookahead()
                 self.concat()
@@ -187,6 +203,15 @@ class Node():
                 self.splice()
             else:
                 self.parseError('Invalid argument for print function at line '+str(self.prevLexeme.lineNumber))
+
+            if self.nextLexeme.label == ')':
+                self.lookahead()
+            else:
+                self.parseError('Expected \')\' at line '+str(self.prevLexeme.lineNumber))
+
+            if self.nextLexeme.label != ';':
+                self.parseError('Expected \';\' at line '+str(self.prevLexeme.lineNumber))
+                self.backtrack()
         else:
             self.parseError('Expected \'(\' for print function at line '+str(self.prevLexeme.lineNumber))
         return
@@ -207,6 +232,7 @@ class Node():
 
                         if self.nextLexeme.label != ';':
                             self.parseError('Expected \';\' at line '+str(self.prevLexeme.lineNumber))
+                            self.backtrack()
                     else:
                         self.parseError('Expected string argument for scan function at line '+str(self.prevLexeme.lineNumber))
                 else:
@@ -386,16 +412,16 @@ class Node():
                 self.lookahead()
                 if self.nextLexeme.label != ';':
                     self.parseError('Expected \';\' at line '+str(callIndex))
+                    self.backtrack()
             else:
                 self.parseError('Expected \'(\' for function call at line '+str(callIndex))
         return
 
     def expression(self):
-        if not self.operand():
-            return False
         if self.operation():
             if self.nextLexeme.label != ';':
                 self.parseError('Expected \';\' at line '+str(self.prevLexeme.lineNumber))
+                self.backtrack()
         return True
 
     def operation(self):
