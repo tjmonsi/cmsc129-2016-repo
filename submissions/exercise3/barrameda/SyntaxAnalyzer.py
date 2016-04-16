@@ -418,11 +418,38 @@ class Node():
         return
 
     def expression(self):
+        save = self.index
         if self.operation():
             if self.nextLexeme.label != ';':
                 self.parseError('Expected \';\' at line '+str(self.prevLexeme.lineNumber))
                 self.backtrack()
-        return True
+            else:
+                return True
+
+        self.index = save
+        if self.booleanOp():
+            if self.nextLexeme.label != ';':
+                self.parseError('Expected \';\' at line '+str(self.prevLexeme.lineNumber))
+                self.backtrack()
+            else:
+                return True
+
+        self.index = save
+        if self.nextLexeme.label == 'splice':
+            if self.splice():
+                return True
+
+        self.index = save
+        if self.nextLexeme.label == 'concat':
+            if self.concat():
+                return True
+
+        self.index = save
+        if self.nextLexeme.label == 'len':
+            if self.length():
+                return True
+
+        return False
 
     def operation(self):
         if self.operand():
