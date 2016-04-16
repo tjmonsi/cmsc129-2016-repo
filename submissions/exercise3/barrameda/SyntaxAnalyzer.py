@@ -76,8 +76,19 @@ class Node():
 
     def varDec(self):
         #<VARDEC>:= new <VARIDENT><LINE-DELIMITER>
+        #<ARRAYDEC>:= new <VARIDENT><ARRAY-SIZE><LINE-DELIMITER>
         if self.nextLexeme.label == 'Variable Identifier':
             self.lookahead()
+            if self.nextLexeme.label ==  '[':
+                self.lookahead()
+                if not self.operation():
+                    if not self.operand():
+                        self.parseError('Expected argument for array declaration at line '+str(self.prevLexeme.lineNumber))
+                    self.lookahead()
+                if self.nextLexeme.label == ']':
+                    self.lookahead()
+                else:
+                    self.parseError('Expected \']\' for array declaration at line '+str(self.prevLexeme.lineNumber))
             if self.nextLexeme.label != ';':
                 self.parseError('Expected \';\' at line '+str(self.prevLexeme.lineNumber))
         else:
