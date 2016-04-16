@@ -46,6 +46,9 @@ class Node():
         if self.nextLexeme.label == 'new':
             self.lookahead()
             self.varDec()
+        elif self.nextLexeme.label == 'print':
+            self.lookahead()
+            self.output()
         elif self.nextLexeme.label == 'if':
             self.lookahead()
             self.ifcond()
@@ -109,6 +112,81 @@ class Node():
                 else:
                     self.backtrack()
         return False
+
+    def splice(self):
+        if self.nextLexeme.label == '(':
+            self.lookahead()
+            if self.nextLexeme.label in ['String Literal', 'Variable Identifier']:
+                self.lookahead()
+                if self.nextLexeme.label == ',':
+                    self.lookahead()
+                    if not self.operation():
+                        if not self.operand():
+                            self.parseError('Expected \'int\' for splice function at line '+str(self.prevLexeme.lineNumber))
+                        self.lookahead()
+                        if self.nextLexeme.label == ',':
+                            self.lookahead()
+                            if not self.operation():
+                                if not self.operand():
+                                    self.parseError('Expected \'int\' for splice function at line '+str(self.prevLexeme.lineNumber))
+                                self.lookahead()
+                        else:
+                            self.parseError('Invalid argument count for splice function at line '+str(self.prevLexeme.lineNumber))
+                else:
+                    self.parseError('Invalid argument count for splice function at line '+str(self.prevLexeme.lineNumber))
+            else:
+                self.parseError('Expected String for splice function at line '+str(self.prevLexeme.lineNumber))
+        else:
+            self.parseError('Expected \'(\' for splice function at line '+str(self.prevLexeme.lineNumber))
+        return
+
+    def concat(self):
+        if self.nextLexeme.label == '(':
+            self.lookahead()
+            if self.nextLexeme.label in ['String Literal', 'Variable Identifier']:
+                self.lookahead()
+                if self.nextLexeme.label == ',':
+                    self.lookahead()
+                    if self.nextLexeme.label in ['String Literal', 'Variable Identifier']:
+                        self.lookahead()
+                        if self.nextLexeme.label == ')':
+                            self.lookahead()
+                        else:
+                            self.parseError('Expected \')\' at line '+str(self.nextLexeme.lineNumber))
+                    else:
+                        self.parseError('Invalid argument 2 for concat function at line '+str(self.prevLexeme.lineNumber))
+                else:
+                    self.parseError('Invalid argument count for concat function at line '+str(self.prevLexeme.lineNumber))
+            else:
+                self.parseError('Invalid argument 1 for concat function at line '+str(self.prevLexeme.lineNumber))
+        else:
+            self.parseError('Expected \'(\' for concat function at line '+str(self.prevLexeme.lineNumber))
+        return
+        return
+
+    def output(self):
+        if self.nextLexeme.label == '(':
+            self.lookahead()
+            if self.nextLexeme.label in ['String Literal', 'Variable Identifier']:
+                self.lookahead()
+                if self.nextLexeme.label == ')':
+                    self.lookahead()
+                else:
+                    self.parseError('Expected \')\' at line '+str(self.nextLexeme.lineNumber))
+
+                if self.nextLexeme.label != ';':
+                    self.parseError('Expected \';\' at line '+str(self.prevLexeme.lineNumber))
+            elif self.nextLexeme.label == 'concat':
+                self.lookahead()
+                self.concat()
+            elif self.nextLexeme.label == 'splice':
+                self.lookahead()
+                self.splice()
+            else:
+                self.parseError('Invalid argument for print function at line '+str(self.prevLexeme.lineNumber))
+        else:
+            self.parseError('Expected \'(\' for print function at line '+str(self.prevLexeme.lineNumber))
+        return
 
     def contentBlock(self, name, index):
         if self.nextLexeme.label == '{':
