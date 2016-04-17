@@ -1,9 +1,21 @@
 func !main() {
-	new @weight = 50
-	new @height = 160
-	new $out = "Your BMI is "
-	
-	new @bmi = @height/(@weight*@weight)
-	print(concat($out, @bmi))
-	return 0
+	new @weight = 50;
+	new height = 160;
+	new $out = "Your BMI is ";
+
+	new @bmi = @height/(@weight*@weight);
+	print(concat($out, @bmi));
+	while(1) {
+		print("looping");
+	}
+	while(true) {
+		for(;;){
+
+		}
+
+		do {
+
+		}while(false)
+	}
+	return 0;
 }

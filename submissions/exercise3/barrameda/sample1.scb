@@ -1,9 +1,9 @@
 func !main(!wow) {
-	new !wow[3];
-	call !main(1+2+3);
-	if (1>2){
-	1+1;
+	new !wow
+	if("string")
+		print("Missing }");
+		print(1+1);
+		1+true;
 	}
-	print("Hello World!");
-	return 0
+	return 0;
 }

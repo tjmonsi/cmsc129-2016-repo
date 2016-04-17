@@ -1,17 +1,13 @@
-func !main(){
-	new !n = 5
-	new !first
-	new !second
-	new !next
-	
-	while(_i<n) {
-		if(_i<=1) {
-			!next = _i
-		} else {
-			!next = !first + !second
-			!first = !second
-			!second = !next
-		}
-		print(!next)
+func fact(!n) {
+	if(n <= 1) {
+		return 1;
 	}
+
+	return !fact(!n-1);
+}
+
+func !main(){
+	call !fact();
+	print(splice("hey"))
+	concat("hi", 1);
 }

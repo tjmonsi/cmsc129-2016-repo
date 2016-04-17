@@ -16,7 +16,7 @@ class Node():
     def lookahead(self):
         self.index += 1
         if self.index < len(self.lexemes):
-            self.prevLexeme = self.nextLexeme
+            self.prevLexeme = self.lexemes[self.index-1]
             self.nextLexeme = self.lexemes[self.index]
         return
 
@@ -25,6 +25,10 @@ class Node():
         if self.index > 0 and self.index < len(self.lexemes):
             self.nextLexeme = self.lexemes[self.index]
         return
+
+    def panic(self):
+        while self.nextLexeme.label not in [')', '}', ';']:
+            self.lookahead()
 
     def parse(self):
         self.codeblock()
@@ -83,6 +87,7 @@ class Node():
     def varDec(self):
         #<VARDEC>:= new <VARIDENT><LINE-DELIMITER>
         #<ARRAYDEC>:= new <VARIDENT><ARRAY-SIZE><LINE-DELIMITER>
+        save = self.index
         if self.nextLexeme.label == 'Variable Identifier':
             self.lookahead()
             if self.nextLexeme.label ==  '[':
@@ -96,25 +101,29 @@ class Node():
                 else:
                     self.parseError('Expected \']\' for array declaration at line '+str(self.prevLexeme.lineNumber))
             if self.nextLexeme.label != ';':
-                self.parseError('Expected \';\' at line '+str(self.prevLexeme.lineNumber))
+                self.index = save+1
                 self.backtrack()
+                if not self.assign():
+                    self.parseError('Expected \';\' at line '+str(self.prevLexeme.lineNumber))
         else:
             self.parseError('Expected Variable Identifier at line '+str(self.prevLexeme.lineNumber))
 
-        return
+        return True
 
     def assign(self):
         if self.nextLexeme.label == 'Variable Identifier':
             self.lookahead()
             if self.nextLexeme.label == '=':
                 self.lookahead()
-                if self.operation():
-                    return True
-                elif self.operand():
-                    self.lookahead()
-                    return True
+                if not self.operation():
+                    if not self.operand():
+                        self.parseError('Expected argument for array declaration at line '+str(self.prevLexeme.lineNumber))
+                        self.lookahead()
+                    else:
+                        self.lookahead()
+                        return True
                 else:
-                    self.backtrack()
+                    return True
         return False
 
     def splice(self):
@@ -133,17 +142,21 @@ class Node():
                             if not self.operation():
                                 if not self.operand():
                                     self.parseError('Expected \'int\' for splice function at line '+str(self.prevLexeme.lineNumber))
+                                    self.panic()
                                 else:
                                     self.lookahead()
-                                    if self.nextLexeme.label == ')':
-                                        self.lookahead()
-                                        return True
-                                    else:
-                                        self.parseError('Expected \')\' at line '+str(self.prevLexeme.lineNumber))
+                            if self.nextLexeme.label == ')':
+                                self.lookahead()
+                                return True
+                            else:
+                                self.parseError('Expected \')\' at line '+str(self.prevLexeme.lineNumber))
                         else:
                             self.parseError('Invalid argument count for splice function at line '+str(self.prevLexeme.lineNumber))
+                            self.panic()
+                            print("wow "+self.nextLexeme.label)
                 else:
                     self.parseError('Invalid argument count for splice function at line '+str(self.prevLexeme.lineNumber))
+                    self.panic()
             else:
                 self.parseError('Expected String for splice function at line '+str(self.prevLexeme.lineNumber))
         else:
@@ -159,17 +172,21 @@ class Node():
                     self.lookahead()
                     if self.nextLexeme.label in ['String Literal', 'Variable Identifier']:
                         self.lookahead()
-                        if self.nextLexeme.label == ')':
-                            self.lookahead()
-                            return True
-                        else:
-                            self.parseError('Expected \')\' at line '+str(self.prevLexeme.lineNumber))
                     else:
                         self.parseError('Invalid argument 2 for concat function at line '+str(self.prevLexeme.lineNumber))
+                        self.panic()
+
+                    if self.nextLexeme.label == ')':
+                        self.lookahead()
+                        return True
+                    else:
+                        self.parseError('Expected \')\' at line '+str(self.prevLexeme.lineNumber))
                 else:
                     self.parseError('Invalid argument count for concat function at line '+str(self.prevLexeme.lineNumber))
+                    self.panic()
             else:
                 self.parseError('Invalid argument 1 for concat function at line '+str(self.prevLexeme.lineNumber))
+                self.panic()
         else:
             self.parseError('Expected \'(\' for concat function at line '+str(self.prevLexeme.lineNumber))
 
@@ -180,14 +197,19 @@ class Node():
             self.lookahead()
             if self.nextLexeme.label in ['String Literal', 'Variable Identifier']:
                 self.lookahead()
-                if self.nextLexeme.label == ')':
-                    self.lookahead()
-                    return True
-                else:
             else:
                 self.parseError('Invalid argument for length function at line '+str(self.prevLexeme.lineNumber))
+                self.panic()
+
+            if self.nextLexeme.label == ')':
+                self.lookahead()
+                return True
+            else:
+                self.parseError('Expected \')\' at line '+str(self.prevLexeme.lineNumber))
+
         else:
             self.parseError('Expected \'(\' for length function at line '+str(self.prevLexeme.lineNumber))
+
         return False
 
     def output(self):
@@ -203,6 +225,7 @@ class Node():
                 self.splice()
             else:
                 self.parseError('Invalid argument for print function at line '+str(self.prevLexeme.lineNumber))
+                self.panic()
 
             if self.nextLexeme.label == ')':
                 self.lookahead()
@@ -248,7 +271,7 @@ class Node():
         if self.nextLexeme.label == '{':
             self.lookahead()
             while self.nextLexeme.label != '}':
-                if self.index == len(self.lexemes):
+                if self.index >= len(self.lexemes):
                     self.parseError('Expected \'}\' for '+name+' at line '+str(index))
                     return False
                 self.statement()
@@ -262,13 +285,13 @@ class Node():
         ifIndex = self.prevLexeme.lineNumber
         if self.nextLexeme.label == '(':
             self.lookahead()
-            if self.booleanOp():
-                if self.nextLexeme.label == ')':
-                    self.lookahead()
-                else:
-                    self.parseError('Expected \')\' at line '+str(self.nextLexeme.lineNumber))
-            else:
+            if not self.booleanOp():
                 self.parseError('Expected boolean condition for if-condition at line '+str(ifIndex))
+                self.panic()
+            if self.nextLexeme.label == ')':
+                self.lookahead()
+            else:
+                self.parseError('Expected \')\' at line '+str(self.nextLexeme.lineNumber))
             if not self.contentBlock('if-condition', ifIndex):
                 return
         else:
@@ -301,27 +324,28 @@ class Node():
         forIndex = self.prevLexeme.lineNumber
         if self.nextLexeme.label == '(':
             self.lookahead()
-            if self.assign():
+            if not self.assign():
+                self.parseError('Expected expression for argument 1 in for condition at line '+str(forIndex))
+                self.panic()
+            if self.nextLexeme.label == ';':
+                self.lookahead()
+                if not self.booleanOp():
+                    self.parseError('Expected boolean for argument 2 in for condition at line '+str(forIndex))
+                    self.panic()
                 if self.nextLexeme.label == ';':
                     self.lookahead()
-                    if self.booleanOp():
-                        if self.nextLexeme.label == ';':
-                            self.lookahead()
-                            if self.assign():
-                                if self.nextLexeme.label == ')':
-                                    self.lookahead()
-                                else:
-                                    self.parseError('Expected \')\' at line '+str(self.nextLexeme.lineNumber))
-                            else:
-                                self.parseError('Expected expression for argument 3 in for condition at line '+str(forIndex))
-                        else:
-                             self.parseError('Expected \';\' after argument 2 in for condition at line '+str(forIndex))
-                    else:
-                        self.parseError('Expected boolean for argument 2 in for condition at line '+str(forIndex))
+                    if not self.assign():
+                        self.parseError('Expected expression for argument 3 in for condition at line '+str(forIndex))
+                        self.panic()
                 else:
-                     self.parseError('Expected \';\' after argument 1 in for condition at line '+str(forIndex))
+                     self.parseError('Expected \';\' after argument 2 in for condition at line '+str(forIndex))
             else:
-                self.parseError('Expected expression for argument 1 in for condition at line '+str(forIndex))
+                 self.parseError('Expected \';\' after argument 1 in for condition at line '+str(forIndex))
+
+            if self.nextLexeme.label == ')':
+                self.lookahead()
+            else:
+                self.parseError('Expected \')\' at line '+str(self.nextLexeme.lineNumber))
             if not self.contentBlock('for-loop', forIndex):
                 return
         else:
@@ -332,13 +356,14 @@ class Node():
         whileIndex = self.prevLexeme.lineNumber
         if self.nextLexeme.label == '(':
             self.lookahead()
-            if self.booleanOp():
-                if self.nextLexeme.label == ')':
-                    self.lookahead()
-                else:
-                    self.parseError('Expected \')\' at line '+str(self.nextLexeme.lineNumber))
-            else:
+            if not self.booleanOp():
                 self.parseError('Expected boolean condition for while-loop at line '+str(whileIndex))
+                self.panic()
+
+            if self.nextLexeme.label == ')':
+                self.lookahead()
+            else:
+                self.parseError('Expected \')\' at line '+str(self.nextLexeme.lineNumber))
             if not self.contentBlock('while-loop', whileIndex):
                 return
         else:
@@ -353,13 +378,14 @@ class Node():
                 self.lookahead()
                 if self.nextLexeme.label == '(':
                     self.lookahead()
-                    if self.booleanOp():
-                        if self.nextLexeme.label == ')':
-                            self.lookahead()
-                        else:
-                            self.parseError('Expected \')\' at line '+str(self.nextLexeme.lineNumber))
-                    else:
+                    if not self.booleanOp():
                         self.parseError('Expected boolean condition for do-while-loop at line '+str(doIndex))
+                        self.panic()
+
+                    if self.nextLexeme.label == ')':
+                        self.lookahead()
+                    else:
+                        self.parseError('Expected \')\' at line '+str(self.nextLexeme.lineNumber))
                     if self.nextLexeme.label == ";":
                         self.lookahead()
                     else:
@@ -383,12 +409,13 @@ class Node():
                             self.lookahead()
                     else:
                         self.parseError('Invalid argument for function declaration at line '+str(funcIndex))
-                        while self.nextLexeme.label not in [',', ')']:
-                            self.lookahead()
+                        self.panic()
                 self.lookahead()
                 self.contentBlock('function-declaration', funcIndex)
             else:
                 self.parseError('Expected \'(\' for function declaration at line '+str(funcIndex))
+        else:
+            self.parseError('Expected function name for function declaration at line '+str(funcIndex))
         return
 
     def funcCall(self):
@@ -426,7 +453,8 @@ class Node():
             else:
                 return True
 
-        self.index = save
+        self.index = save+1
+        self.backtrack()
         if self.booleanOp():
             if self.nextLexeme.label != ';':
                 self.parseError('Expected \';\' at line '+str(self.prevLexeme.lineNumber))
@@ -434,18 +462,24 @@ class Node():
             else:
                 return True
 
-        self.index = save
+        self.index = save+1
+        self.backtrack()
         if self.nextLexeme.label == 'splice':
+            self.lookahead()
             if self.splice():
                 return True
 
-        self.index = save
+        self.index = save+1
+        self.backtrack()
         if self.nextLexeme.label == 'concat':
+            self.lookahead()
             if self.concat():
                 return True
 
-        self.index = save
+        self.index = save+1
+        self.backtrack()
         if self.nextLexeme.label == 'len':
+            self.lookahead()
             if self.length():
                 return True
 
@@ -509,14 +543,15 @@ class Node():
                 else:
                     self.parseError('Expected \')\' at line'+str(self.nextLexeme.lineNumber))
 
-        self.index = save
+        self.index = save-1
+        self.lookahead()
         if self.boolean():
             self.lookahead()
             return True
         return False
 
     def boolean(self):
-        if self.nextLexeme.label in ['true', 'false', 'Variable Identifier', '(']:
+        if self.nextLexeme.label in ['true', 'false', '(']:
             return True
         elif self.operand():
             self.lookahead()
