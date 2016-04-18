@@ -1,0 +1,9 @@
+func !main(!wow) {
+	new !wow
+	if("string")
+		print("Missing }");
+		print(1+1);
+		1+true;
+	}
+	return 0;
+}
