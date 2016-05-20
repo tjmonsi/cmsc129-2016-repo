@@ -1,0 +1,81 @@
+Start
+|	L Main
+|	|	L Fn-def
+|	|	|	L function  =>  function
+|	|	|	L identifier  =>  main
+|	|	|	L (  =>  (
+|	|	|	L Fn-Param  =>  epsilon
+|	|	|	L )  =>  error recovery
+|	|	|	L {  =>  {
+|	|	|	L Code-Block
+|	|	|	|	L newline
+|	|	|	|	|	L \n  =>  \n
+|	|	|	|	|	L newline  =>  epsilon
+|	|	|	|	L Code-Block
+|	|	|	|	|	L Statement
+|	|	|	|	|	|	L print-call
+|	|	|	|	|	|	|	L print  =>  print
+|	|	|	|	|	|	|	L Fn-call'
+|	|	|	|	|	|	|	|	L (  =>  (
+|	|	|	|	|	|	|	|	L Fn-Param
+|	|	|	|	|	|	|	|	|	L Expression
+|	|	|	|	|	|	|	|	|	|	L string  =>  "Hello World!"
+|	|	|	|	|	|	|	|	|	|	L Num-Exp  =>  epsilon
+|	|	|	|	|	|	|	|	|	L Fn-Param'  =>  epsilon
+|	|	|	|	|	|	|	|	L )  =>  error recovery
+|	|	|	|	|	|	L ;  =>  ;
+|	|	|	|	|	L Code-Block
+|	|	|	|	|	|	L newline
+|	|	|	|	|	|	|	L \n  =>  \n
+|	|	|	|	|	|	|	L newline  =>  epsilon
+|	|	|	|	|	|	L Code-Block
+|	|	|	|	|	|	|	L Statement
+|	|	|	|	|	|	|	|	L print-call
+|	|	|	|	|	|	|	|	|	L print  =>  print
+|	|	|	|	|	|	|	|	|	L Fn-call'
+|	|	|	|	|	|	|	|	|	|	L (  =>  (
+|	|	|	|	|	|	|	|	|	|	L Fn-Param
+|	|	|	|	|	|	|	|	|	|	|	L Expression
+|	|	|	|	|	|	|	|	|	|	|	|	L string  =>  "Hi"
+|	|	|	|	|	|	|	|	|	|	|	|	L Num-Exp  =>  epsilon
+|	|	|	|	|	|	|	|	|	|	|	L Fn-Param'  =>  epsilon
+|	|	|	|	|	|	|	|	|	|	L )  =>  )
+|	|	|	|	|	|	|	|	L ;  =>  ;
+|	|	|	|	|	|	|	L Code-Block
+|	|	|	|	|	|	|	|	L newline
+|	|	|	|	|	|	|	|	|	L \n  =>  \n
+|	|	|	|	|	|	|	|	|	L newline
+|	|	|	|	|	|	|	|	|	|	L \n  =>  \n
+|	|	|	|	|	|	|	|	|	|	L newline  =>  epsilon
+|	|	|	|	|	|	|	|	L Code-Block
+|	|	|	|	|	|	|	|	|	L Statement
+|	|	|	|	|	|	|	|	|	|	L Var-dec
+|	|	|	|	|	|	|	|	|	|	|	L var  =>  var
+|	|	|	|	|	|	|	|	|	|	|	L Var-dec'
+|	|	|	|	|	|	|	|	|	|	|	|	L identifier  =>  wassup
+|	|	|	|	|	|	|	|	|	|	|	|	L Var-dec''
+|	|	|	|	|	|	|	|	|	|	|	|	|	L =  =>  =
+|	|	|	|	|	|	|	|	|	|	|	|	|	L Expression
+|	|	|	|	|	|	|	|	|	|	|	|	|	|	L Number
+|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L number  =>  error recovery
+|	|	|	|	|	|	|	|	|	|	|	|	|	|	L Num-Exp  =>  epsilon
+|	|	|	|	|	|	|	|	|	|	L ;  =>  ;
+|	|	|	|	|	|	|	|	|	L Code-Block
+|	|	|	|	|	|	|	|	|	|	L newline
+|	|	|	|	|	|	|	|	|	|	|	L \n  =>  \n
+|	|	|	|	|	|	|	|	|	|	|	L newline
+|	|	|	|	|	|	|	|	|	|	|	|	L \n  =>  \n
+|	|	|	|	|	|	|	|	|	|	|	|	L newline  =>  epsilon
+|	|	|	|	|	|	|	|	|	|	L Code-Block
+|	|	|	|	|	|	|	|	|	|	|	L Return
+|	|	|	|	|	|	|	|	|	|	|	|	L return  =>  return
+|	|	|	|	|	|	|	|	|	|	|	|	L Expression
+|	|	|	|	|	|	|	|	|	|	|	|	|	L (  =>  (
+|	|	|	|	|	|	|	|	|	|	|	|	|	L Expression
+|	|	|	|	|	|	|	|	|	|	|	|	|	|	L Number
+|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	L number  =>  error recovery
+|	|	|	|	|	|	|	|	|	|	|	|	|	|	L Num-Exp  =>  epsilon
+|	|	|	|	|	|	|	|	|	|	|	|	|	L )  =>  )
+|	|	|	|	|	|	|	|	|	|	|	L ;  =>  ;
+|	|	|	L }  =>  }
+|	|	L Main'  =>  epsilon
