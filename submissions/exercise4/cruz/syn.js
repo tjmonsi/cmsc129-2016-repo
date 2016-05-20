@@ -316,12 +316,13 @@ function compile(){
 	gRules.push(new Rule("Statement", ["Var-dec", ";"]))
 	gRules.push(new Rule("Statement", ["Asg-Exp", ";"]))
 	gRules.push(new Rule("Statement", ["print-call", ";"]))
+	gRules.push(new Rule("Statement", ["scan-call", ";"]));
 	gRules.push(new Rule("Statement", ["load-call", ";"]))
 	gRules.push(new Rule("Statement", ["Wh-loop"]))
 	gRules.push(new Rule("Statement", ["For-loop"]))
 	gRules.push(new Rule("Statement", ["Do-loop",";"]))
 	gRules.push(new Rule("Statement", ["If"]))
-
+	
 	//Grammar for Variable Declaration
 	gRules.push(new Rule("Var-dec", ["var", "Var-dec'"]));
 	gRules.push(new Rule("Var-dec'", ["identifier", "Var-dec''"]));
@@ -339,12 +340,13 @@ function compile(){
 	gRules.push(new Rule("Fn-Param'", ["epsilon"]));
 
 	//Grammar for Assignment expression and Function call fix
-	gRules.push(new Rule("Asg-Exp", ["identifier", "Asg-Exp'"]));
+	gRules.push(new Rule("Asg-Exp", ["identifier", "Array", "Asg-Exp'"]));
 	gRules.push(new Rule("Asg-Exp'", ["=", "Expression"]));
 	gRules.push(new Rule("Asg-Exp'", ["Fn-call'"]));
 	
 	//Grammar for print call, load call, and custom-made function calls
 	gRules.push(new Rule("print-call", ["print","Fn-call'"]));
+	gRules.push(new Rule("scan-call", ["scan","Fn-call'"]));
 	gRules.push(new Rule("load-call", ["load","Fn-call'"]));
 	gRules.push(new Rule("Fn-call", ["identifier","Fn-call'"]));
 	gRules.push(new Rule("Fn-call'", ["(", "Fn-Param", ")"]));
@@ -357,9 +359,9 @@ function compile(){
 
 	//Grammar for if/-else
 	gRules.push(new Rule("If", ["if", "(", "Expression", ")", "{", "Code-Block", "}", "If'"]));
-	gRules.push(new Rule("If'", ["newline", "else", "Else"]));
+	gRules.push(new Rule("If'", ["newline", "If'"]));
 	gRules.push(new Rule("If'", ["else", "Else"]));
-	gRules.push(new Rule("Else", ["epsilon"]));
+//	gRules.push(new Rule("Else", ["epsilon"]));
 	gRules.push(new Rule("Else", ["{", "Code-Block", "}"]));
 
 	//Grammar for Mathematical Expression

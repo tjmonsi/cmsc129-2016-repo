@@ -254,8 +254,6 @@ function compile(){
 	escnext.next["\\"] = esc1;
 	escnext2.next["\\"] = esc2;
 
-	console.log(sStart.next['"'].next["n"] == cstring2.next["n"])
-
 	//Keywords
 	newKeyWordSeq("break", "break");
 	newKeyWordSeq("continue", "continue");
@@ -266,6 +264,7 @@ function compile(){
 	newKeyWordSeq("load", "load");
 	newKeyWordSeq("null", "null");
 	newKeyWordSeq("print", "print");
+	newKeyWordSeq("scan", "scan");
 	newKeyWordSeq("return", "return");
 	newKeyWordSeq("true", "true");
 	newKeyWordSeq("var", "var");
@@ -473,9 +472,9 @@ function newKeyWordSeq(string, type){
 //Checks the text per character then finds tokens by traversing states starting at sStart
 function analyze(text,filename){
 
-	console.log("----------\nContent of \""+filename+"\":\n----------\n"+text+"\n----------");	
-	console.log("analyzing...");
-	console.log("----------\n");
+	// console.log("----------\nContent of \""+filename+"\":\n----------\n"+text+"\n----------");	
+	// console.log("analyzing...");
+	// console.log("----------\n");
 	var t = [];
 	var tokens = [];
 

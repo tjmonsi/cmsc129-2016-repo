@@ -152,7 +152,7 @@ Production Rules
 |Expression|( /Expression/ )|
 ||/load-call/|
 ||identifier /ID-Exp/|
-||string /Num-Exp/|
+||string /Str-Exp/|
 ||Number /Num-Exp/|
 |ID-Exp|/Array/ /Num-Exp/|
 ||/Fn-call/ /Num-Exp/|
@@ -163,5 +163,6 @@ Production Rules
 ||Term|
 ||epsilon|
 |Number|number|
+|Str-Exp|+ /Expression/|
 ||\- number|
 |Return|return /Expression/|
