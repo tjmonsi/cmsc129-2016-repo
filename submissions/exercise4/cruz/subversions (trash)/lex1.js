@@ -18,7 +18,6 @@
 			for (k in state.next) {
 				this.next[state.character].addNext(state.next[k]);
 			}
-
 		}
 		else{
 			this.next[state.character] = state;
@@ -32,7 +31,7 @@
 	var isloaded = false;
 	var failed = false;
 	var sStart = new State(null, false)		//Starting Universal FA State
-
+	var id = new State(null,false);
 //--]
 //---]
 
@@ -46,13 +45,20 @@ function compile(){
 		newKeyWord(String.fromCharCode(i), String.fromCharCode(i));
 	}
 
+	var num = new State(null, false);
 	//numbers configuration
 	for (var i = 0; i < 10; i++) {
-		sStart.next[i.toString()].type = "number";
+		num.next[i.toString()] = new State(i.toString(), true);
+		num.next[i.toString()].type = "number";
+		sStart.next[i.toString()] = num.next[i.toString()];
+	}
+
+	for (var i = 0; i < 10; i++) {
 		for (var j = 0; j < 10; j++) {
-			sStart.next[i.toString()].addNext(sStart.next[j.toString()]);
+			num.next[i.toString()].addNext(num.next[j.toString()]);
 		}
 	}
+
 	//decimals configuration
 	var dec = new State(".", false);
 	for (var i = 0; i < 10; i++) {
@@ -68,46 +74,50 @@ function compile(){
 			dec.next[i.toString()].addNext(dec.next[j.toString()]);
 		}
 	}
-	//setup negativity
-	// sStart.next["-"].type = "-";
-	// for (var i = 0; i < 10; i++) {
-	// 	sStart.next["-"].addNext(sStart.next[i.toString()]);
-	// }
 
 	//word generation (for identifiers and such)
 	//setup numbers after letters
 	var cr = new State(null,false);
+	// var id = new State(null, false);
 	for (var n = 0; n < 10; n++) {
 		cr.next[n.toString()] = new State(n.toString(),true);
 		cr.next[n.toString()].type = "identifier";
 	}
 	//setup characters
 	for (var i = 65; i <= 90; i++) {	//Capital
-		sStart.next[String.fromCharCode(i)].type = "identifier";
+		id.next[String.fromCharCode(i)] = new State(String.fromCharCode(i), true);
+		id.next[String.fromCharCode(i)].type = "identifier";
+		sStart.next[String.fromCharCode(i)] = (id.next[String.fromCharCode(i)]);
 		for (var n = 0; n < 10; n++) {
-			cr.next[n.toString()].addNext(sStart.next[String.fromCharCode(i)]);
-			sStart.next[String.fromCharCode(i)].addNext(cr.next[n.toString()]);
+			cr.next[String.fromCharCode(i)] = (id.next[String.fromCharCode(i)]);
+			id.next[n.toString()] = (cr.next[n.toString()]);
 		}
-		for (var j = 65; j < 90; j++) {
-			sStart.next[String.fromCharCode(i)].addNext(sStart.next[String.fromCharCode(j)]);
-		}
-
+		
 	}
+	for (var i = 65; i <= 90; i++) 	//Capital
+		for (var j = 65; j < 90; j++) 
+			id.next[String.fromCharCode(i)].addNext(id.next[String.fromCharCode(j)]);
+		
 	for (var i = 97; i <= 122; i++) {	//Small
-		sStart.next[String.fromCharCode(i)].type = "identifier";
+		id.next[String.fromCharCode(i)] = new State(String.fromCharCode(i), true);
+		id.next[String.fromCharCode(i)].type = "identifier";
+		sStart.next[String.fromCharCode(i)] = (id.next[String.fromCharCode(i)]);
 		for (var n = 0; n < 10; n++) {
-			cr.next[n.toString()].addNext(sStart.next[String.fromCharCode(i)]);
-			sStart.next[String.fromCharCode(i)].addNext(cr.next[n.toString()]);
+			cr.next[String.fromCharCode(i)] = (id.next[String.fromCharCode(i)]);
+			id.next[n.toString()] = (cr.next[n.toString()]);
 		}
-		for (var j = 97; j < 122; j++) {
-			sStart.next[String.fromCharCode(i)].addNext(sStart.next[String.fromCharCode(j)]);
-		}
-
 	}
+	for (var i = 97; i <= 122; i++) 	//Small
+		for (var j = 97; j < 122; j++) 
+			id.next[String.fromCharCode(i)].addNext(id.next[String.fromCharCode(j)]);
+		
+
+	
+
 	for (var i = 65; i <= 90; i++) {	//Capital connect
 		for (var j = 97; j <= 122; j++) {
-			sStart.next[String.fromCharCode(i)].addNext(sStart.next[String.fromCharCode(j)]);
-			sStart.next[String.fromCharCode(j)].addNext(sStart.next[String.fromCharCode(i)]);
+			id.next[String.fromCharCode(i)].addNext(id.next[String.fromCharCode(j)]);
+			id.next[String.fromCharCode(j)].addNext(id.next[String.fromCharCode(i)]);
 		}
 	}
 
@@ -218,8 +228,6 @@ function compile(){
 		
 	}
 
-
-
 	esc1.next["\\"] = escnext.next["\\"]; 
 	esc1.next["n"] = cstring.next["n"]; 
 	esc1.next["t"] = cstring.next["t"]; 
@@ -278,15 +286,15 @@ function compile(){
 	function setCharacters(node, next){
 
 		for (var n = 0; n < 10; n++) {
-			node.next[n.toString()] = (sStart.next[n.toString()]);
+			node.next[n.toString()] = (id.next[n.toString()]);
 		}
 		for (var j = 97; j < 122; j++) {
 			if(String.fromCharCode(j) == next)
 				continue;
-			node.next[String.fromCharCode(j)] = (sStart.next[String.fromCharCode(j)]);
+			node.next[String.fromCharCode(j)] = (id.next[String.fromCharCode(j)]);
 		}
 		for (var j = 65; j < 90; j++) {
-			node.next[String.fromCharCode(j)] = (sStart.next[String.fromCharCode(j)]);
+			node.next[String.fromCharCode(j)] = (id.next[String.fromCharCode(j)]);
 		}
 
 	}
@@ -321,68 +329,8 @@ function compile(){
 	
 	setCharacters(falseSet);
 	
-	var lenSet = sStart;
-	var nextn;
-	lenSet = lenSet.next["l"];
-	
-	nextn = new State("e",true);
-	nextn.type = "identifier"
-	lenSet.next["e"] = nextn;
-	lenSet = lenSet.next["e"];
-	
-	setCharacters(lenSet, "n");
-	nextn = new State("n",true);
-	nextn.type = "len"
-	lenSet.next["n"] = nextn;
-	lenSet = lenSet.next["n"];
-	
-	setCharacters(lenSet);
-	
-	var randSet = sStart;
-	var nextn;
-	randSet = randSet.next["r"];
-	
-	nextn = new State("a",true);
-	nextn.type = "identifier"
-	randSet.next["a"] = nextn;
-	randSet = randSet.next["a"];
-	
-	setCharacters(randSet, "n");
-	nextn = new State("n",true);
-	nextn.type = "identifier"
-	randSet.next["n"] = nextn;
-	randSet = randSet.next["n"];
-
-	setCharacters(randSet, "d");
-	nextn = new State("d",true);
-	nextn.type = "rand"
-	randSet.next["d"] = nextn;
-	randSet = randSet.next["d"];
-	
-	setCharacters(randSet);
-	
-	var sqrtSet = sStart;
-	var nextn;
-	sqrtSet = sqrtSet.next["s"];
-	
-	nextn = new State("q",true);
-	nextn.type = "identifier"
-	sqrtSet.next["q"] = nextn;
-	sqrtSet = sqrtSet.next["q"];
-	
-	setCharacters(sqrtSet, "r");
-	nextn = new State("r",true);
-	nextn.type = "identifier"
-	sqrtSet.next["r"] = nextn;
-	sqrtSet = sqrtSet.next["r"];
-
-	setCharacters(sqrtSet, "t");
-	nextn = new State("t",true);
-	nextn.type = "sqrt"
-	sqrtSet.next["t"] = nextn;
-	sqrtSet = sqrtSet.next["t"];
-	
-	setCharacters(sqrtSet);
+ 	falseSet = falseSet.next["f"].next["a"];
+	setCharacters(falseSet, "l");
 	
 	//Manually setting function keyword
 	var fnSet = sStart;
@@ -430,10 +378,11 @@ function compile(){
 	fnSet.next["n"] = nextn;
 	fnSet = fnSet.next["n"];
 
+	
 	setCharacters(fnSet);
 	
-	// fnSet = fnSet.next["f"].next["a"];
-	// setCharacters(fnSet, "l");
+ 	fnSet = fnSet.next["f"].next["a"];
+	setCharacters(fnSet, "l");
 
 //	newKeyWordSeq("false", "false");
 //	newKeyWordSeq("function", "function");
@@ -461,21 +410,6 @@ function compile(){
 	newKeyWord("\r\n", "\\n");
 	newKeyWord("\n", "\\n");
 	sStart.next[" "].type = "\\s";
-
-	//Hotfixing numbers in variables
-	// for (var i = 65; i <= 90; i++) {	//Capital
-	// 	sStart.next[String.fromCharCode(i)].type = "identifier";
-	// 	for (var n = 0; n < 10; n++) {
-	// 		sStart.next[String.fromCharCode(i)].addNext(cr.next[n.toString()]);
-	// 	}
-		
-	// }
-	// for (var i = 97; i <= 122; i++) {	//Small
-	// 	sStart.next[String.fromCharCode(i)].type = "identifier";
-	// 	for (var n = 0; n < 10; n++) {
-	// 		sStart.next[String.fromCharCode(i)].addNext(cr.next[n.toString()]);
-	// 	}
-	// }
 
 }
 
@@ -670,3 +604,5 @@ exports.failed = () => failed;
 
 compile();
 
+
+console.log(sStart.next["b"].next["2"])

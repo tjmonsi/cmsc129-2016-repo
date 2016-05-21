@@ -143,7 +143,7 @@ var verbose = false;
 	//Saves the tree in array form to a file
 	ParseNode.prototype.saveA = function(file){
 		//save to new file with similar filename + ".p3.txt"
-	  	fs.writeFile(file+".p3A.txt", "{\""+pStart.rule.root+"\":{\n"+pStart.getArray(1)+"}}", function(err) {
+	  	fs.writeFile(file+".p3A.txt", SyntaxAnalyze("{\""+pStart.rule.root+"\":{\n"+pStart.getArray(1)+"}}"), function(err) {
 		    if(err) {
 		        return print(err);
 		    }
@@ -309,10 +309,10 @@ function compile(){
 	//Grammar for inside function code block
 	gRules.push(new Rule("Code-Block", ["Statement", "Code-Block"]))
 	gRules.push(new Rule("Code-Block", ["newline", "Code-Block"]))
-	gRules.push(new Rule("Code-Block", ["Return",";"]))
 	gRules.push(new Rule("Code-Block", ["epsilon"]))
 
 	//Grammar for statements
+	gRules.push(new Rule("Statement", ["Return",";"]))
 	gRules.push(new Rule("Statement", ["Var-dec", ";"]))
 	gRules.push(new Rule("Statement", ["Asg-Exp", ";"]))
 	gRules.push(new Rule("Statement", ["print-call", ";"]))
@@ -330,14 +330,11 @@ function compile(){
 	gRules.push(new Rule("Var-dec''", ["=","Expression"]));
 	
 	//Grammar for Function Definition
-	gRules.push(new Rule("Fn-def", ["function", "identifier", "(", "Fn-Param", ")", "{", "Code-Block", "}"]));
-	
-	//Grammar for Function params
-	gRules.push(new Rule("Fn-Param", ["Expression", "Fn-Param'"]));
-	gRules.push(new Rule("Fn-Param", ["epsilon"]));
-	gRules.push(new Rule("Fn-Param'", [",","Fn-Param''"]));
-	gRules.push(new Rule("Fn-Param''", ["Expression","Fn-Param'"]));
-	gRules.push(new Rule("Fn-Param'", ["epsilon"]));
+	gRules.push(new Rule("Fn-def", ["function", "identifier", "(", "Fn-DefPar", ")", "{", "Code-Block", "}"]));
+	gRules.push(new Rule("Fn-DefPar", ["identifier", "Fn-DefPar'"]));
+	gRules.push(new Rule("Fn-DefPar", ["epsilon"]));
+	gRules.push(new Rule("Fn-DefPar'", [",","identifier","Fn-DefPar'"]));
+	gRules.push(new Rule("Fn-DefPar'", ["epsilon"]));
 
 	//Grammar for Assignment expression and Function call fix
 	gRules.push(new Rule("Asg-Exp", ["identifier", "Array", "Asg-Exp'"]));
@@ -345,12 +342,22 @@ function compile(){
 	gRules.push(new Rule("Asg-Exp'", ["Fn-call'"]));
 	
 	//Grammar for print call, load call, and custom-made function calls
+	gRules.push(new Rule("sqroot", ["sqrt","Fn-call'"]));
+	gRules.push(new Rule("len-call", ["len","Fn-call'"]));
+	gRules.push(new Rule("rand-call", ["rand","Fn-call'"]));
 	gRules.push(new Rule("print-call", ["print","Fn-call'"]));
 	gRules.push(new Rule("scan-call", ["scan","Fn-call'"]));
 	gRules.push(new Rule("load-call", ["load","Fn-call'"]));
 	gRules.push(new Rule("Fn-call", ["identifier","Fn-call'"]));
 	gRules.push(new Rule("Fn-call'", ["(", "Fn-Param", ")"]));
-	
+
+	//Grammar for Function Call params
+	gRules.push(new Rule("Fn-Param", ["Expression", "Fn-Param'"]));
+	gRules.push(new Rule("Fn-Param", ["epsilon"]));
+	gRules.push(new Rule("Fn-Param'", [",","Fn-Param''"]));
+	gRules.push(new Rule("Fn-Param''", ["Expression","Fn-Param'"]));
+	gRules.push(new Rule("Fn-Param'", ["epsilon"]));
+
 	//Grammar for Loops
 	gRules.push(new Rule("Wh-loop", ["while","(","Expression",")","{","Code-Block","}"]));
 	gRules.push(new Rule("For-loop", ["for","(","Statement",";","Expression",";","Expression",")","{","Code-Block","}"]));
@@ -375,17 +382,10 @@ function compile(){
 	gRules.push(new Rule("Term'", ["*", "Term"]));
 	gRules.push(new Rule("Term'", ["/", "Term"]));
 	gRules.push(new Rule("Term'", ["epsilon"]));
-	gRules.push(new Rule("Factor", ["identifier", "ID-Exp"]));
-	gRules.push(new Rule("Factor", ["Number"]));
-	gRules.push(new Rule("Factor", ["(","Math-Exp",")"]));
-
-	//Grammar for Boolean Expression
-	gRules.push(new Rule("Bool", ["<", "Expression"]));
-	gRules.push(new Rule("Bool", [">", "Expression"]));
-	gRules.push(new Rule("Bool", ["<=", "Expression"]));
-	gRules.push(new Rule("Bool", [">=", "Expression"]));
-	gRules.push(new Rule("Bool", ["==", "Expression"]));
-	gRules.push(new Rule("Bool", ["!=", "Expression"]));
+	// gRules.push(new Rule("Factor", ["identifier", "ID-Exp"]));
+	// gRules.push(new Rule("Factor", ["Number"]));
+	// gRules.push(new Rule("Factor", ["(","Math-Exp",")"]));
+	gRules.push(new Rule("Factor", ["Expression"]));
 	
 	//Grammar for arrays
 	gRules.push(new Rule("Array", ["[","Expression","]","Array"]));
@@ -393,21 +393,24 @@ function compile(){
 
 	//Grammar for General Expression (Disseminates Expression into its known domain)
 	gRules.push(new Rule("Expression", ["(","Expression",")"]));
-	gRules.push(new Rule("Expression", ["load-call"]));
+	gRules.push(new Rule("Expression", ["load-call","Op"]));
+	gRules.push(new Rule("Expression", ["len-call","Op"]));
+	gRules.push(new Rule("Expression", ["rand-call","Op"]));
+	gRules.push(new Rule("Expression", ["sqroot","Op"]));
+	gRules.push(new Rule("Expression", ["Number", "Op"]));
 	gRules.push(new Rule("Expression", ["identifier", "ID-Exp"]));
 	gRules.push(new Rule("Expression", ["string", "Str-Exp"]));
-	gRules.push(new Rule("Expression", ["Number", "Num-Exp"]));
 	gRules.push(new Rule("Expression'", ["epsilon"]));
-	gRules.push(new Rule("ID-Exp", ["Array","Num-Exp"]));	//For Arrays
-	gRules.push(new Rule("ID-Exp", ["Fn-call'","Num-Exp"]));	//For function calls
-	gRules.push(new Rule("ID-Exp", ["Num-Exp"]));
+	gRules.push(new Rule("ID-Exp", ["Array","Op"]));	//For Arrays
+	gRules.push(new Rule("ID-Exp", ["Fn-call'","Op"]));	//For function calls
+	gRules.push(new Rule("ID-Exp", ["Op"]));
 	gRules.push(new Rule("ID-Exp", ["epsilon"]));
-	gRules.push(new Rule("Num-Exp", ["Bool"]));
-	gRules.push(new Rule("Num-Exp", ["Math-Exp'"]));
-	gRules.push(new Rule("Num-Exp", ["Term'"]));
-	gRules.push(new Rule("Num-Exp", ["epsilon"]));	
 	gRules.push(new Rule("Number",["number"]))
 	gRules.push(new Rule("Number",["-","number"]))
+	gRules.push(new Rule("Op", ["boolean", "Expression"]));
+	gRules.push(new Rule("Op", ["operation", "Expression"]));
+	gRules.push(new Rule("Op", ["epsilon"]));
+	gRules.push(new Rule("Str-Exp",["boolean","Expression"]))
 	gRules.push(new Rule("Str-Exp",["+","Expression"]))
 	gRules.push(new Rule("Str-Exp",["epsilon"]))
 
@@ -621,7 +624,7 @@ function checkSubTree(current, type, value){
 	//If there is no children, immediately generate a sequence until this point
 	if(current.children.length == 0){
 		print("==NO CHILDREN==\n---Immediately returning generated sequence---")
-		return generateSequence(current, type);
+		return generateSequence(current, type, value);
 	}
 
 	do{
@@ -634,7 +637,7 @@ function checkSubTree(current, type, value){
 
 				//If the child matches the current type immediately use this type
 				if(child.terminal && child.value == null){
-					if(child.rule.root == type){
+					if(child.rule.root == type || child.rule.root == value){
 						child.value = value;
 						child.finished = true;
 						lastnode = child;
@@ -645,11 +648,11 @@ function checkSubTree(current, type, value){
 				//If the child has no epsilon rule, immediately generate a sequence on this rule
 				if(!hasEpsilon(child.rule.root)){
 					print("==NO EPSILON==\n---Immediately returning generated sequence---")
-					return generateSequence(child, type);
+					return generateSequence(child, type, value);
 				}
 
 				//Try generating a sequence
-				var seq = generateSequence(child, type);
+				var seq = generateSequence(child, type, value);
 				if(seq != null){
 					return seq;
 				}
@@ -678,7 +681,7 @@ function checkSubTree(current, type, value){
 
 //Temporarily expands a node for a terminal
 //Returns expansion sequence
-function generateSequence(current, type){
+function generateSequence(current, type, value){
 
 	//Create a path for type
 	var expected = current.rule.root;
@@ -714,7 +717,7 @@ function generateSequence(current, type){
 			continue;
 		}
 
-		if(current.rule.indexOf(type) != -1)
+		if(current.rule.indexOf(type) != -1 || current.rule.indexOf(value) != -1)
 			break;
 
 			var roots = getRulesByVariable(current.rule[0]);
@@ -739,7 +742,7 @@ function generateSequence(current, type){
 	}
 
 	//When a rule is found, create the sequence by reversing the path from the current (last node)
-	if(current.rule[0] == type){
+	if(current.rule[0] == type || current.rule[0] == value){
 		
 		//trace back up
 		while(current.prev != null){
@@ -1020,7 +1023,21 @@ function start(file){
 	
 }
 
+function SyntaxAnalyze(tree){
+
+	var obj = JSON.parse(tree);
+
+
+
+}
+
 //---]
+
+function standalone(){
+	compile();
+	main(process.argv[2]);
+	
+}
 
 exports.startSyn = function(file){
 	compile();
