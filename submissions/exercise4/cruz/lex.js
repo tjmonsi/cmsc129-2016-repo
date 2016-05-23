@@ -258,20 +258,20 @@ function compile(){
 	escnext2.next["\\"] = esc2;
 
 	//Keywords
-	newKeyWordSeq("break", "break");
-	newKeyWordSeq("continue", "continue");
-	newKeyWordSeq("do", "do");
-	newKeyWordSeq("else", "else");
-	newKeyWordSeq("for", "for");
-	newKeyWordSeq("if", "if");
-	newKeyWordSeq("load", "load");
-	newKeyWordSeq("null", "null");
-	newKeyWordSeq("print", "print");
-	newKeyWordSeq("scan", "scan");
-	newKeyWordSeq("return", "return");
-	newKeyWordSeq("true", "true");
-	newKeyWordSeq("var", "var");
-	newKeyWordSeq("while", "while");
+	newKeyWordSeq("break", "break", cr);
+	newKeyWordSeq("continue", "continue", cr);
+	newKeyWordSeq("do", "do", cr);
+	newKeyWordSeq("else", "else", cr);
+	newKeyWordSeq("for", "for", cr);
+	newKeyWordSeq("if", "if", cr);
+	newKeyWordSeq("load", "load", cr);
+	newKeyWordSeq("num", "num", cr);
+	newKeyWordSeq("print", "print", cr);
+	newKeyWordSeq("scan", "scan", cr);
+	newKeyWordSeq("return", "return", cr);
+	newKeyWordSeq("true", "true", cr);
+	newKeyWordSeq("var", "var", cr);
+	newKeyWordSeq("while", "while", cr);
 	
 	//Manual setting
 
@@ -290,6 +290,21 @@ function compile(){
 		}
 
 	}
+
+	//Hotfixing numbers in variables
+	// for (var i = 65; i <= 90; i++) {	//Capital
+	// 	sStart.next[String.fromCharCode(i)].type = "identifier";
+	// 	for (var n = 0; n < 10; n++) {
+	// 		sStart.next[String.fromCharCode(i)].addNext(cr.next[n.toString()]);
+	// 	}
+		
+	// }
+	// for (var i = 97; i <= 122; i++) {	//Small
+	// 	sStart.next[String.fromCharCode(i)].type = "identifier";
+	// 	for (var n = 0; n < 10; n++) {
+	// 		sStart.next[String.fromCharCode(i)].addNext(cr.next[n.toString()]);
+	// 	}
+	// }
 
 	//Manually setting false keyword
 	var falseSet = sStart;
@@ -384,6 +399,29 @@ function compile(){
 	
 	setCharacters(sqrtSet);
 	
+	var saveSet = sStart;
+	var nextn;
+	saveSet = saveSet.next["s"];
+	
+	nextn = new State("a",true);
+	nextn.type = "identifier"
+	saveSet.next["a"] = nextn;
+	saveSet = saveSet.next["a"];
+	
+	setCharacters(saveSet, "v");
+	nextn = new State("v",true);
+	nextn.type = "identifier"
+	saveSet.next["v"] = nextn;
+	saveSet = saveSet.next["v"];
+
+	setCharacters(saveSet, "e");
+	nextn = new State("e",true);
+	nextn.type = "save"
+	saveSet.next["e"] = nextn;
+	saveSet = saveSet.next["e"];
+	
+	setCharacters(saveSet);
+	
 	//Manually setting function keyword
 	var fnSet = sStart;
 	var nextn;
@@ -462,21 +500,6 @@ function compile(){
 	newKeyWord("\n", "\\n");
 	sStart.next[" "].type = "\\s";
 
-	//Hotfixing numbers in variables
-	// for (var i = 65; i <= 90; i++) {	//Capital
-	// 	sStart.next[String.fromCharCode(i)].type = "identifier";
-	// 	for (var n = 0; n < 10; n++) {
-	// 		sStart.next[String.fromCharCode(i)].addNext(cr.next[n.toString()]);
-	// 	}
-		
-	// }
-	// for (var i = 97; i <= 122; i++) {	//Small
-	// 	sStart.next[String.fromCharCode(i)].type = "identifier";
-	// 	for (var n = 0; n < 10; n++) {
-	// 		sStart.next[String.fromCharCode(i)].addNext(cr.next[n.toString()]);
-	// 	}
-	// }
-
 }
 
 //Shortens the creation of tokens/lexemes
@@ -522,13 +545,13 @@ function newKeyWord(string, type){
 }
 
 //Specially made for identifier-clashing keywords
-function newKeyWordSeq(string, type){
+function newKeyWordSeq(string, type, cr){
 	var temp = newTokenSeq(string, type);
 	var chars = string.split('');
 	for (var i = 0; i < temp.length-1; i++) {
 		temp[i].next[chars[i+1]] = (temp[i+1]);
 		for (var n = 0; n < 10; n++) {
-			temp[i].next[n.toString()] = (sStart.next[n.toString()]);
+			temp[i].next[n.toString()] = (cr.next[n.toString()]);
 		}
 		for (var j = 97; j < 122; j++) {
 			if(String.fromCharCode(j) == chars[i+1])
@@ -669,4 +692,3 @@ exports.failed = () => failed;
 //---]
 
 compile();
-

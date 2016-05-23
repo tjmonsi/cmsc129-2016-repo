@@ -1,5 +1,5 @@
 var readlineSync = require('readline-sync');
-
+var fs = require("fs");					//File System (file read/write)
 var looptester = 0;
 
 var starter = setInterval(function(){
@@ -140,7 +140,7 @@ var curfn = -1;
 var data = [];
 var fnlist = {};
 
-var fnNotice = ["print-call", "Var-dec'", "Asg-Exp", "If", "Wh-loop", "scan-call", "len-call", "Return"];
+var fnNotice = ["print-call", "Var-dec'", "Asg-Exp", "If", "Wh-loop", "scan-call", "len-call", "Return", "save-call"];
 
 
 function main(){
@@ -197,6 +197,8 @@ function transfer(header, object){
 		case "scan-call": return {"action":"scan","params":makeExParams(object["Fn-call'"]["Fn-Param"])};
 			break;
 		case "Return": return {"action":"return","expression":makeExpression(object["Expression"])};
+			break;
+		case "save-call": return {"action":"save","params":makeExParams(object["Fn-call'"]["Fn-Param"])};
 			break;
 	}
 
@@ -282,6 +284,28 @@ function makeExpression(exp, prevOp){
 				
 		}
 
+
+	}else if(exp["num-call"]!=undefined){
+
+		expression["type"] = "numify";
+		expression["value"] = null;
+		if(exp["num-call"]["Fn-call'"]["Fn-Param"]!="epsilon")
+			expression["params"] = makeExParams(exp["num-call"]["Fn-call'"]["Fn-Param"]);
+
+		expression["op"] = exp["Op"]["operation"]
+		expression["operand"] = makeExpression(exp["Op"]["Expression"], expression["op"]);
+
+	}else if(exp["load-call"]!=undefined){
+
+		expression["type"] = "load";
+		expression["value"] = null;
+		if(exp["load-call"]["Fn-call'"]["Fn-Param"]!="epsilon")
+			expression["params"] = makeExParams(exp["load-call"]["Fn-call'"]["Fn-Param"]);
+
+		expression["op"] = exp["Op"]["operation"]
+		expression["operand"] = makeExpression(exp["Op"]["Expression"], expression["op"]);
+
+		// console.log("LENCALL", expression)		
 
 	}else if(exp["len-call"]!=undefined){
 
@@ -388,14 +412,73 @@ function express(expression, verbose, everb){
 
 	while(true){
 
-		if(exp.type == "length"){
+		if(exp.type == "load"){
+
+			exp.type = "str";
+			exp.value = "";
+
+			// console.log("EXPLENGTH", exp.params)
+			for (var i = 0; i < exp.params.length; i++) {
+
+				var filename = (express(exp.params[i]).value);
+				var filecon = fs.readFileSync(filename, 'utf8');
+				var clean = [];
+			  	filecon = filecon.split("");
+			  	filecon.forEach(function(e){
+			  		if(e != "\r")
+			  			clean.push(e);
+			  	})
+			  	clean = clean.join("");
+
+			  	exp.value += (clean + "\n");
+				// console.log([exp.value])
+
+			}
+				  	
+			// console.log("EXPLENGTHF", exp.value, exp.type);
+
+		}
+		else if(exp.type == "numify"){
+
+			exp.type = "num";
+			exp.value = 0;
+			// console.log("EXPLENGTH", exp.params)
+			try{
+				exp.value = parseInt(express(exp.params[0]).value);
+			}catch(e){errorTermination(4)}
+			// console.log("EXPLENGTHF", exp.value, exp.type);
+
+		}
+		else if(exp.type == "length"){
 
 			exp.type = "num";
 			exp.value = 0;
 			// console.log("EXPLENGTH", exp.params)
 			exp.params.forEach(function(e){
-				exp.value += (express(e).value.length);
+				
+				var len = 0;
+
+				if(e.type == "var"){
+					var get = data[curfn].get(e.value);
+					if(get.type == "num"){
+						if(get.array.length > 0)
+							len = get.array.length;
+						else
+							len = 1;
+					}
+					else
+						len = (express(e).value.length);
+				}
+				else if(e.type == "num")
+					len = 1;
+				else
+					len = (express(e).value.length);
+				
+				exp.value += len
+			
 			});
+
+			// console.log("LENGTH", exp);
 			// console.log("EXPLENGTHF", exp.value, exp.type);
 
 		}
@@ -506,7 +589,8 @@ function express(expression, verbose, everb){
 
 				}
 
-				if(exp != null)
+				if(exp != null){
+					
 					if(exp.type == "var"){
 
 						flag = exp.index!=null;
@@ -532,7 +616,7 @@ function express(expression, verbose, everb){
 						
 					}
 				
-
+				}
 			}
 			content.push({"type":"str", "value":value});
 		}
@@ -575,8 +659,6 @@ function express(expression, verbose, everb){
 
 				}
 
-				// console.log(value)
-
 				op = exp.op;
 				exp = exp.operand;
 
@@ -609,6 +691,7 @@ function express(expression, verbose, everb){
 				
 
 			}
+			// console.log("Val", value)
 			content.push({"type":"num", "value":value});
 		
 		}
@@ -617,6 +700,8 @@ function express(expression, verbose, everb){
 			break;
 
 	}
+
+	// console.log("CON", content)
 
 	var type = "num";
 	var val = 0;
@@ -947,9 +1032,27 @@ function runActions(actions, struct, verbose){
 				break;
 			case "return": returnCmd(actions[i]["expression"]);
 				break;
+			case "save": saveCmd(actions[i]["params"]);
+				break;
 		}
 
 	}
+
+}
+
+function saveCmd(params){
+
+	var file = (express(params[0]).value)
+	var content = ""+(express(params[1]).value)
+
+	fs.writeFile(file, content, function(err){
+
+		if(err){
+			errorTermination(5, err);
+		}
+
+		console.log("Successfully saved "+params[1].value+" to "+file+"!");
+	})
 
 }
 
@@ -1105,6 +1208,12 @@ function errorTermination(errtype, errparam){
 			break;
 		
 		case 3: console.log("ERROR: Operand for a string should only be '+'.");
+			break;
+
+		case 4: console.log("ERROR: Trying to parse non-number to number.");
+			break;
+
+		case 5: console.log("ERROR: No such file: "+errparam.path+".");
 			break;
 
 		default : console.log("ERROR: Fatal Error.");

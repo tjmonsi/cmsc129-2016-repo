@@ -317,7 +317,7 @@ function compile(){
 	gRules.push(new Rule("Statement", ["Asg-Exp", ";"]))
 	gRules.push(new Rule("Statement", ["print-call", ";"]))
 	gRules.push(new Rule("Statement", ["scan-call", ";"]));
-	gRules.push(new Rule("Statement", ["load-call", ";"]))
+	gRules.push(new Rule("Statement", ["save-call", ";"]))
 	gRules.push(new Rule("Statement", ["Wh-loop"]))
 	gRules.push(new Rule("Statement", ["For-loop"]))
 	gRules.push(new Rule("Statement", ["Do-loop",";"]))
@@ -348,6 +348,8 @@ function compile(){
 	gRules.push(new Rule("print-call", ["print","Fn-call'"]));
 	gRules.push(new Rule("scan-call", ["scan","Fn-call'"]));
 	gRules.push(new Rule("load-call", ["load","Fn-call'"]));
+	gRules.push(new Rule("num-call", ["num","Fn-call'"]));
+	gRules.push(new Rule("save-call", ["save","Fn-call'"]));
 	gRules.push(new Rule("Fn-call", ["identifier","Fn-call'"]));
 	gRules.push(new Rule("Fn-call'", ["(", "Fn-Param", ")"]));
 
@@ -362,7 +364,6 @@ function compile(){
 	gRules.push(new Rule("Wh-loop", ["while","(","Expression",")","{","Code-Block","}"]));
 	gRules.push(new Rule("For-loop", ["for","(","Statement",";","Expression",";","Expression",")","{","Code-Block","}"]));
 	gRules.push(new Rule("Do-loop", ["do","{","Code-Block","}","while","(","Expression",")"]));
-
 
 	//Grammar for if/-else
 	gRules.push(new Rule("If", ["if", "(", "Expression", ")", "{", "Code-Block", "}", "If'"]));
@@ -394,6 +395,7 @@ function compile(){
 	//Grammar for General Expression (Disseminates Expression into its known domain)
 	gRules.push(new Rule("Expression", ["(","Expression",")"]));
 	gRules.push(new Rule("Expression", ["load-call","Op"]));
+	gRules.push(new Rule("Expression", ["num-call","Op"]));
 	gRules.push(new Rule("Expression", ["len-call","Op"]));
 	gRules.push(new Rule("Expression", ["rand-call","Op"]));
 	gRules.push(new Rule("Expression", ["sqroot","Op"]));
