@@ -1,0 +1,21 @@
+Note: Parentheses aren't implemented yet for grouping.
+
+Variable Declaration Variable declaration can be done by using the following sequence: var [varname] = [expression].
+
+Variable Assignment Variable assignment can be done by using the following sequence: [varname] = [expression]. The variable should already be existing before it can be set.
+
+Printing Printing can be done by calling the "print([expression])" function. The parameters will be printed as string sequence.
+
+Function Calls Function calling can be done by simply using the function as long as it exists.
+
+Computation Using operations +, -, *, /, and % in numbers works fine. Can be used in variable declaration and assignments.
+	However, this does not follow the MDAS rule.
+
+To convert number to string, use ""+[number];
+
+To convert string to number, use num([string]);
+
+If Statement If statement must be called exactly as: if([expression]){[code-block]}else{[code-block]}.
+	The conditional statements will only accept value 1 of type num as true.
+
+While Loop While loop must be called with brackets. while([expression]){[code-block]}
