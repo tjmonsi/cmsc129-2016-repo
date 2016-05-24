@@ -1,0 +1,26 @@
+S
+	L Math-Exp
+		L Term
+			L Factor
+				L identifier  =>  x
+			L Term'
+				L *  =>  *
+				L Term
+					L Factor
+						L number  =>  4
+					L Term'
+		L Math-Exp'
+			L +  =>  +
+			L Math-Exp
+				L Term
+					L Factor
+						L number  =>  25
+					L Term'
+				L Math-Exp'
+					L +  =>  +
+					L Math-Exp
+						L Term
+							L Factor
+								L number  =>  3
+							L Term'
+						L Math-Exp'

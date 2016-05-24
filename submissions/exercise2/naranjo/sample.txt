@@ -1,0 +1,21 @@
+start:
+	instance n;
+	instance first == == 0;
+	instance second == 1;
+	instance next;
+	instance c;
+	write "Enter no. of terms\n";
+	ask n;
+	around(c == 0; c lt h; c == c, 1: ad){
+		yes(c lte 1) so{
+			next == c;
+		}noso{
+			next == first, second: ad;
+			first == second;
+			second == next;
+		}
+		write next;
+		write "\n";
+	}
+end:
+sdfdsf
