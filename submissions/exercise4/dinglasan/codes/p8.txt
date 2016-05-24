@@ -1,0 +1,52 @@
+simula
+	numero i = 0;
+	numero a[50];
+	numero b;
+	numero c[50];
+	numero totalA = 0;
+	numero totalC = 0;
+	numero ave;
+	numero d[50];
+	numero e = 0;
+	numero f;
+
+	habang(masmaliit(i,50)):
+		a[i] = random(10001);		
+		b = random(2);
+		kung(parehas(b,0)):
+			a[i] = multiplay(a[i],-1);
+		gnuk;	
+		c[i] = multiplay(a[i],-1);
+		isulat(a[i]);
+		isulat("\n");
+		i = plas(i,1);
+	gnabah;
+
+	i = 0;
+	habang(masmaliit(i,50)):
+		totalA = plas(totalA,a[i]);
+		totalC = plas(totalC,c[i]);
+		i = plas(i,1);
+	gnabah;
+
+	isulat("Summation of numbers:");
+	isulat(totalA);
+	isulat("\n Summation of negative counterparts:");
+	isulat(totalC);
+
+	ave = dibayd(totalA,50);
+	isulat("\n Average of numbers:");
+	isulat(ave);
+
+	i = 0;
+	habang(masmaliit(i,50)):
+		d[i] = maynus(a[i],ave);
+		d[i] = multiplay(d[i],d[i]);
+		e = plas(e,d[i]);
+		i = plas(i,1);
+	gnabah;
+	
+	isulat("\n Standard Deviation of numbers:");
+	f = parigat(dibayd(e,50));
+	isulat(f);
+tapos
