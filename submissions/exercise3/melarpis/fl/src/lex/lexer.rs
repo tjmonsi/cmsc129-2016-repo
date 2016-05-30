@@ -1,4 +1,4 @@
-use lexeme::Lexeme;
+use lex::lexeme::Lexeme;
 /***
  * Structure Lexer
  * -> Lexical Analyzer structure used to analyze given source code
@@ -36,8 +36,8 @@ impl<'a> Lexer<'a> {
                 Lexeme::Continue, Lexeme::Break, Lexeme::Return, Lexeme::True, Lexeme::False, Lexeme::Fn, Lexeme::Greater,
                 Lexeme::GreaterEqual, Lexeme::Less, Lexeme::LessEqual, Lexeme::IsEqual, Lexeme::IsNotEqual, Lexeme::Plus,
                 Lexeme::Minus, Lexeme::Multiply, Lexeme::Divide, Lexeme::Modulo, Lexeme::Equals, Lexeme::Comma, Lexeme::SemiColon,
-                Lexeme::OpenBrace, Lexeme::CloseBrace, Lexeme::OpenParenthesis, Lexeme::CloseParenthesis, Lexeme::OpenBracket,
-                Lexeme::CloseBracket, Lexeme::Newline, Lexeme::And, Lexeme::Or, Lexeme::Not
+                Lexeme::LBrace, Lexeme::RBrace, Lexeme::LParen, Lexeme::RParen, Lexeme::LBracket,
+                Lexeme::RBracket, Lexeme::Newline, Lexeme::And, Lexeme::Or, Lexeme::Not
             ],
         }
     }

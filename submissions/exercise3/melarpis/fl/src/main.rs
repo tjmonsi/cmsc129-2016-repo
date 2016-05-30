@@ -1,8 +1,7 @@
 use std::*;
 use std::io::prelude::*;
-pub mod lexeme;
-pub mod lexer;
-use lexer::Lexer;
+mod lex;
+use lex::lexer::Lexer;
 
 fn main() {
     if env::args().count() != 2 { println!("Usage: {} <filename.fl>", env::args().nth(0).unwrap()); }
@@ -130,4 +129,3 @@ fn error_test_5() {
     let errors = lexer.count_errors();
     assert_eq!(errors, 9);
 }
-

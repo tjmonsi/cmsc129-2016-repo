@@ -1,0 +1,6 @@
+fn main() {
+	lt v;
+	let s = "string";
+	out(s, stderr):
+	ret v;
+}

@@ -1,0 +1,12 @@
+fn fib(n) {
+	let prev = 1;
+	let curr = 1;
+	let res;
+	while n > 2 {
+		res = prev + curr;
+		prev = curr;
+		curr = res;
+		n = n - 1;
+	}
+	res
+}

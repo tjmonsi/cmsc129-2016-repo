@@ -1,11 +1,13 @@
 use lexeme::Lexeme;
 
 pub struct Parser<'a> {
-    tree: Vec<Vec<Lexeme>>
+    next: usize,
+    tokens: Vec<Lexeme>,
 }
 
 impl<'a> Parser<'a> {
-    fn new(tokens: Vec<Lexeme>) -> Parser {
+    pub fn new(tokens: Vec<Lexeme>) -> Parser {
+        
     }
 
 }
