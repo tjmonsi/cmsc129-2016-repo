@@ -1,0 +1,34 @@
+Start
+	L Main
+		L Fn-dec
+			L function  =>  \n
+			L identifier  =>  identifier
+			L (  =>  (
+			L Fn-Param
+				L identifier  =>  \n
+				L Fn-Param'
+					L ,  =>  \n
+					L Fn-Param''
+						L identifier  =>  \n
+						L Fn-Param'  =>  epsilon
+			L )  =>  )
+			L {  =>  {
+			L Code-Block
+				L newline
+					L \n  =>  \n
+					L newline'
+						L \n  =>  \n
+						L newline'  =>  epsilon
+				L Code-Block
+					L Statement
+						L Var-dec
+							L var  =>  \n
+							L Var-dec'
+								L identifier  =>  \n
+								L Var-dec''
+									L =  =>  \n
+									L Expression
+						L ;
+					L Code-Block
+			L }
+		L Main'

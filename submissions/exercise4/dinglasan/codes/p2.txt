@@ -1,0 +1,31 @@
+simula
+
+	numero b;
+	numero i;
+
+	isulat("Pumasok ng isang bilang : ");
+	ikuha(b);
+
+	kung(parehas(b,0)):
+		isulat("0 \n");
+	gnuk;		
+
+	kung(masmalaki(b,0)):
+		i = 1;
+		habang(masmaliit(i,plas(b,1))):
+			isulat(i);
+			isulat("\n");
+			i = plas(i,1);
+		gnabah;		
+	gnuk;	
+
+	kung(masmaliit(b,0)):
+		i = -1;
+		habang(masmalaki(i,maynus(b,1))):
+			isulat(i);
+			isulat("\n");
+			i = maynus(i,1);
+		gnabah;		
+	gnuk;
+	
+tapos

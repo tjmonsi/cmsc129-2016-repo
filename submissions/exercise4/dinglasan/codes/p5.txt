@@ -1,0 +1,98 @@
+simula
+
+	numero num;
+	numero i = 0;
+	numero j;
+	numero temp;
+
+	isulat("Pumasok ng isang bilang mula 1 hanggang 20 : ");
+	ikuha(num);
+	numero listahan[num];
+	numero pataas[num];
+	numero pababa[num];
+
+	habang(masmaliit(i,num)):	
+		isulat("Ipasok ang bilang");
+		isulat(plas(i,1));
+		isulat(":");
+		ikuha(listahan[i]);
+		i = plas(i,1);
+	gnabah;	
+
+	i = 0;
+	habang(masmaliit(i,num)):
+		j = 0;
+		habang(masmaliit(j,maynus(num,1))):
+			kung(masmalaki( listahan[j] , listahan[plas(j,1)] )):
+				temp = listahan[plas(j,1)];
+				listahan[plas(j,1)] = listahan[j];
+				listahan[j] = temp;
+			gnuk;
+			j = plas(j,1);
+		gnabah;	
+		i = plas(i,1);	
+	gnabah;	
+
+	i = 0;
+	habang(masmaliit(i,num)):	
+		pataas[i] = listahan[i];	
+		i = plas(i,1);
+	gnabah;	
+
+	i = 0;
+	habang(masmaliit(i,num)):
+		j = 0;
+		habang(masmaliit(j,maynus(num,1))):
+			kung(masmaliit( listahan[j] , listahan[plas(j,1)] )):
+				temp = listahan[j];
+				listahan[j] = listahan[plas(j,1)];
+				listahan[plas(j,1)] = temp;
+			gnuk;
+			j = plas(j,1);
+		gnabah;	
+		i = plas(i,1);	
+	gnabah;	
+
+	i = 0;
+	habang(masmaliit(i,num)):	
+		pababa[i] = listahan[i];	
+		i = plas(i,1);
+	gnabah;	
+
+	i = 0;
+	habang(masmaliit(i,num)):	
+		isulat(pataas[i]);
+		isulat("\s");	
+		i = plas(i,1);	
+	gnabah;	
+
+	isulat("\n");
+
+	i = 0;
+	habang(masmaliit(i,num)):	
+		isulat(pababa[i]);
+		isulat("\s");	
+		i = plas(i,1);	
+	gnabah;	
+
+	isulat("\n");
+
+	i = 0;
+	habang(masmaliit(i,num)):	
+		isulat(plas(pataas[i],pababa[i]));
+		isulat("\s");	
+		i = plas(i,1);
+	gnabah;	
+	
+	isulat("\n");
+
+	i = 0;
+	habang(masmaliit(i,num)):	
+		isulat(multiplay(pataas[i],pababa[i]));
+		isulat("\s");	
+		i = plas(i,1);
+	gnabah;	
+	
+	isulat("\n");
+
+tapos

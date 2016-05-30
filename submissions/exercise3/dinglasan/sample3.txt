@@ -1,0 +1,7 @@
+simula;
+	panksyon getValue();
+		ibigay(10);
+	isulat(10);
+	isulat(plas(20,30));
+	isulat(maynus(plas(40,50),multiplay(60,70)));
+tapos;

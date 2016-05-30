@@ -1,0 +1,25 @@
+simula
+	karakter filename[50];
+	ikuha(filename);
+	payl(filename);
+	isulatSaPayl("The program starts off with a 'simula-tapos' block. Inside it, you can write the code using the following: \n \n");
+	isulatSaPayl("A. Printing in the terminal \n");
+	isulatSaPayl("\t - to print a string or an action in the terminal, you use the 'isulat()' function \n \n");
+	isulatSaPayl("B. Get input from terminal \n");
+	isulatSaPayl("\t - to retrieve user input from terminal, you use 'ikuha()' function with a variable as a parameter \n \n");
+	isulatSaPayl("C. Printing in the terminal \n");
+	isulatSaPayl("\t - to perform arithmetic, binary functions such as 'plas()', 'maynus()', 'dibayd()', 'multiplay()'' and 'modyulo()' are used \n \n");
+	isulatSaPayl("D. Variable Declaration \n");
+	isulatSaPayl("\t - to declare variables, the format 'type varname;' is used \n");
+	isulatSaPayl("\t - you can also declare variables, by the format 'type varname = action;' \n \n");
+	isulatSaPayl("E. Variable Assignment \n");
+	isulatSaPayl("\t - you can assign variables, by using the format 'varname = action;' \n \n");
+	isulatSaPayl("F. Loops \n");
+	isulatSaPayl("\t - 'habang(condition): code_block; gnabah' is currently the only loop available for use \n \n");
+	isulatSaPayl("G. Conditional Statements \n");
+	isulatSaPayl("\t - 'kung(condition): code_block; gnuk' is currently the only conditional statement available for use \n \n");
+	isulatSaPayl("H. File \n");
+	isulatSaPayl("\t - to open a file, 'payl()' is used with filename as the parameter \n");
+	isulatSaPayl("\t - to write a file, 'isulatSaPayl()' is used \n \n");
+	isulat("Ang file ay matatagpuan sa output folder.");
+tapos

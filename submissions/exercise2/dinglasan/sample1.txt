@@ -1,0 +1,3 @@
+simula:
+	isulat("Hello World!");
+tapos;

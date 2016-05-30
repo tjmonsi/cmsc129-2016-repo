@@ -1,0 +1,9 @@
+error3.txt
+simula ; 
+ 	 <VAR>   <VAR> ( ) ; 
+ 	 	 ibigay ( <number> ) 
+ 	 isulat ( ) ; 
+ 	 isulat ( plas ( <number> ) ) ; 
+ 	 isulat ( maynus ( plas ( <number> , <number> ) multiplay ( <number> , <number> ) ) ) ; 
+ tapos 
+ 

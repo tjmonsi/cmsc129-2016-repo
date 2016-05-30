@@ -1,0 +1,128 @@
+Grammar
+===================
+
+Non-Terminals
+-------------
+```
+	CODE
+	STMT
+	OUT
+	IN
+	ARITH
+	BOOL
+	STR
+	VARDEC
+	INIT
+	ARR
+	TYPE
+	FILE
+	FXN
+	RETURN
+	PARAM
+	FCALL
+	FCPARAM
+	LOOP	
+	COND
+	IF
+	ELSE
+	ELSIF
+	ACTION
+	VAR
+	STRING
+```
+
+Terminals
+-------------
+```
+	/number/
+	/alphabet/
+	/symbol/
+	/any/
+	simula
+	tapos
+	isulat
+	ikuha
+	plas
+	maynus
+	dibayd
+	multiplay
+	modyulo
+	masmalaki
+	masmaliit
+	parehas
+	hindeRehas
+	lakiRehas
+	liitRehas
+	haba
+	dugtong
+	numero
+	karakter
+	lutang
+	payl
+	panksyon
+	ibigay
+	habang
+	kung
+	kungHinde
+	eKung
+```	
+
+Production Rules
+-------------
+|/LHS/ | RHS|
+|-----|------|
+|CODE|simula:/STMT/tapos;|
+|STMT|/OUT/;/STMT/
+||/IN/;/STMT/
+||/ARITH/;/STMT/
+||/BOOL/;/STMT/
+||/VARDEC/;/STMT/
+||/FILE/;/STMT/
+||/FXN/;/STMT/
+||/RETURN/;/STMT/
+||/LOOP/;/STMT/
+||/IF/;/STMT/
+||/ELSIF/;/STMT/
+||/ELSE/;/STMT/
+||ε
+|OUT|isulat(/ACTION/)
+||isulat(/STRING/)
+|IN|ikuha(/VAR/)
+|ARITH|plas(/ACTION/,/ACTION/)
+||maynus(/ACTION/,/ACTION/)
+||dibayd(/ACTION/,/ACTION/)
+||multiplay(/ACTION/,/ACTION/)
+||modyulo(/ACTION/,/ACTION/)
+|BOOL|masmalaki(/ACTION/,/ACTION/)
+||masmaliit(/ACTION/,/ACTION/)
+||parehas(/ACTION/,/ACTION/)
+||hindeRehas(/ACTION/,/ACTION/)
+||lakiRehas(/ACTION/,/ACTION/)
+||liitRehas(/ACTION/,/ACTION/)
+|VARDEC|/TYPE//VAR/
+||/TYPE//VAR//INIT/
+|INIT|=/ACTION/
+|ARR|[/ACTION/]/ARR/
+||ε
+|TYPE|numero
+||karakter
+||lutang
+|FILE|payl(/STRING/)
+|RETURN|ibigay(/ACTION/)
+|PARAM|/TYPE//VAR/
+||/TYPE//VAR/,/PARAM/
+|FCPARAM|/ACTION/,/FCPARAM/
+||ε
+|LOOP|habang(/BOOL/)
+|COND|/IF/
+||/ELSE/
+|IF|kung(/BOOL/)
+|ELSE|kungHinde(/BOOL/)
+|ELSIF|eKung(/BOOL/)
+|ACTION|/ARITH/
+||/VAR/
+||/number/
+|VAR|/alphabet//ARR/
+|FCALL|/alphabet/(/FCPARAM/)
+|FXN|panksyon/alphabet/(/PARAM/)
+|STRING|“/any/”

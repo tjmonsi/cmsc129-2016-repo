@@ -1,0 +1,9 @@
+func !main() {
+	new @weight = 50
+	new @height = 160
+	new $out = "Your BMI is "
+	
+	new @bmi = @height/(@weight*@weight)
+	print(concat($out, @bmi))
+	return 0
+}

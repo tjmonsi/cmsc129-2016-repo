@@ -1,0 +1,28 @@
+The program starts off with a 'simula-tapos' block . Inside it , you can write the code using the following : 
+
+A . Printing in the terminal 
+	- to print a string or an action in the terminal , you use the 'isulat ( ) ' function 
+
+B . Get input from terminal 
+	- to retrieve user input from terminal , you use 'ikuha ( ) ' function with a variable as a parameter 
+
+C . Printing in the terminal 
+	- to perform arithmetic , binary functions such as 'plas ( ) ' , 'maynus ( ) ' , 'dibayd ( ) ' , 'multiplay ( ) '' and 'modyulo ( ) ' are used 
+
+D . Variable Declaration 
+	- to declare variables , the format 'type varname ; ' is used 
+	- you can also declare variables , by the format 'type varname = action ; ' 
+
+E . Variable Assignment 
+	- you can assign variables , by using the format 'varname = action ; ' 
+
+F . Loops 
+	- 'habang ( condition ) : code_block ; gnabah' is currently the only loop available for use 
+
+G . Conditional Statements 
+	- 'kung ( condition ) : code_block ; gnuk' is currently the only conditional statement available for use 
+
+H . File 
+	- to open a file , 'payl ( ) ' is used with filename as the parameter 
+	- to write a file , 'isulatSaPayl ( ) ' is used 
+

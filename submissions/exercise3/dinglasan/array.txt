@@ -1,0 +1,1 @@
+<CODE>(0) <STMT>(1) <OUT>(2) <STRING>(3) <STMT>(4) <OUT>(5) <STRING>(6) <STMT>(7) <OUT>(8) <STRING>(9) <STMT>(10) <VARDEC>(11) <TYPE>(12) <VAR>(13) <ARR>(14) <ACTION>(15) <number>(16) <ARR>(17) ε(18) <STMT>(19) <IN>(20) <VAR>(21) <STMT>(24) ε(25) 
