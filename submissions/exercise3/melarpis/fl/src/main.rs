@@ -14,7 +14,7 @@ fn main() {
         println!("Source {}:", filename);
         println!("{}", code);
         let mut lexer = Lexer::new(code);
-        let lexemes = lexer.analyze();
+        let lexemes = lexer.tokenize();
         println!("Lexemes:");
         for l in lexemes{
             println!("{:?}", l);
@@ -29,7 +29,7 @@ fn test() {
     let mut code = String::new();
     f.read_to_string(&mut code).expect("FILE READING ERROR");
     let mut lexer = Lexer::new(code);
-    let lexemes = lexer.analyze();
+    let lexemes = lexer.tokenize();
     let errors = lexer.count_errors();
     assert_eq!(errors, 0);
 }
@@ -41,7 +41,7 @@ fn correct_test_1() {
     let mut code = String::new();
     f.read_to_string(&mut code).expect("FILE READING ERROR");
     let mut lexer = Lexer::new(code);
-    let lexemes = lexer.analyze();
+    let lexemes = lexer.tokenize();
     let errors = lexer.count_errors();
     assert_eq!(errors, 0);
 }
@@ -53,7 +53,7 @@ fn correct_test_2() {
     let mut code = String::new();
     f.read_to_string(&mut code).expect("FILE READING ERROR");
     let mut lexer = Lexer::new(code);
-    let lexemes = lexer.analyze();
+    let lexemes = lexer.tokenize();
     let errors = lexer.count_errors();
     assert_eq!(errors, 0);
 }
@@ -65,7 +65,7 @@ fn correct_test_3() {
     let mut code = String::new();
     f.read_to_string(&mut code).expect("FILE READING ERROR");
     let mut lexer = Lexer::new(code.clone());
-    let lexemes = lexer.analyze();
+    let lexemes = lexer.tokenize();
     let errors = lexer.count_errors();
     assert_eq!(errors, 0);
 }
@@ -77,7 +77,7 @@ fn error_test_1() {
     let mut code = String::new();
     f.read_to_string(&mut code).expect("FILE READING ERROR");
     let mut lexer = Lexer::new(code);
-    let lexemes = lexer.analyze();
+    let lexemes = lexer.tokenize();
     let errors = lexer.count_errors();
     assert_eq!(errors, 5);
 }
@@ -89,7 +89,7 @@ fn error_test_2() {
     let mut code = String::new();
     f.read_to_string(&mut code).expect("FILE READING ERROR");
     let mut lexer = Lexer::new(code);
-    let lexemes = lexer.analyze();
+    let lexemes = lexer.tokenize();
     let errors = lexer.count_errors();
     assert_eq!(errors, 6);
 }
@@ -101,7 +101,7 @@ fn error_test_3() {
     let mut code = String::new();
     f.read_to_string(&mut code).expect("FILE READING ERROR");
     let mut lexer = Lexer::new(code.clone());
-    let lexemes = lexer.analyze();
+    let lexemes = lexer.tokenize();
     let errors = lexer.count_errors();
     assert_eq!(errors, 7);
 }
@@ -113,7 +113,7 @@ fn error_test_4() {
     let mut code = String::new();
     f.read_to_string(&mut code).expect("FILE READING ERROR");
     let mut lexer = Lexer::new(code);
-    let lexemes = lexer.analyze();
+    let lexemes = lexer.tokenize();
     let errors = lexer.count_errors();
     assert_eq!(errors, 8);
 }
@@ -125,7 +125,7 @@ fn error_test_5() {
     let mut code = String::new();
     f.read_to_string(&mut code).expect("FILE READING ERROR");
     let mut lexer = Lexer::new(code.clone());
-    let lexemes = lexer.analyze();
+    let lexemes = lexer.tokenize();
     let errors = lexer.count_errors();
     assert_eq!(errors, 9);
 }

@@ -1,7 +1,7 @@
 use lex::lexeme::Lexeme;
 /***
  * Structure Lexer
- * -> Lexical Analyzer structure used to analyze given source code
+ * -> Lexical Analyzer structure used to tokenize given source code
  */
 #[allow(dead_code)]
 pub struct Lexer<'a>{
@@ -21,28 +21,28 @@ impl<'a> Lexer<'a> {
             index: 0,
             errors: 0,
             code: code,
-            whitespaces: String::from(" \t"),
+            whitespaces: String::from(" \t\n"),
             terminals: vec![
-                "let","for","while","do_while","if",
+                "let","for","while","do","if",
                 "else_if","else","continue","break","return",
                 "true","false","fn",
                 ">",">=","<","<=",
                 "==","!=","+","-","*","/","%",
                 "=",",",";","{","}","(",")","[",
-                "]","\n","&&", "||", "!"
+                "]","&&", "||", "!"
             ],
             lexemes: vec![
-                Lexeme::Let, Lexeme::For, Lexeme::While, Lexeme::DoWhile, Lexeme::If, Lexeme::ElseIf, Lexeme::Else,
+                Lexeme::Let, Lexeme::For, Lexeme::While, Lexeme::Do, Lexeme::If, Lexeme::ElseIf, Lexeme::Else,
                 Lexeme::Continue, Lexeme::Break, Lexeme::Return, Lexeme::True, Lexeme::False, Lexeme::Fn, Lexeme::Greater,
                 Lexeme::GreaterEqual, Lexeme::Less, Lexeme::LessEqual, Lexeme::IsEqual, Lexeme::IsNotEqual, Lexeme::Plus,
                 Lexeme::Minus, Lexeme::Multiply, Lexeme::Divide, Lexeme::Modulo, Lexeme::Equals, Lexeme::Comma, Lexeme::SemiColon,
                 Lexeme::LBrace, Lexeme::RBrace, Lexeme::LParen, Lexeme::RParen, Lexeme::LBracket,
-                Lexeme::RBracket, Lexeme::Newline, Lexeme::And, Lexeme::Or, Lexeme::Not
+                Lexeme::RBracket, Lexeme::And, Lexeme::Or, Lexeme::Not
             ],
         }
     }
     // returns lexemes for each token scanned from the source code
-    pub fn analyze(&mut self) -> Vec<Lexeme> {
+    pub fn tokenize(&mut self) -> Vec<Lexeme> {
         let mut lexemes = Vec::<Lexeme>::new();
         while self.index < self.code.len() - 1{
             let mut construct = false;
