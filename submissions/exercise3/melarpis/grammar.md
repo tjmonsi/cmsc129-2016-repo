@@ -23,7 +23,7 @@ boolean {true, false}
 
 **Keywords:**
 ```rust
-"let", "for", "while", "do",
+"let", "for", "while", "do", "in",
 "continue", "break", "fn", "return",
 "if", "else if", "else",
 "true", "false", "and", "or", "not"
@@ -44,6 +44,11 @@ boolean {true, false}
 #Non-Terminals
 -------------
 ```
+IDENTIFIER
+STRING
+NUMBER
+EXPR
+STMT
 ```
 
 #Production Rules
@@ -89,14 +94,51 @@ boolean {true, false}
 |PARAMS|IDENTIFIER PARAMS_EXT|
 |PARAMS_EXT|"," IDENTIFIER|
 ||epsilon|
-
+|ARRAY_EXPR|"[" ELEMENTS "]"|
+|ELEMENTS|NUMBER E_NUMBER|
+||STRING E_STRING|
+|E_NUMBER|"," NUMBER E_NUMBER|
+||epsilon|
+|E_STRING|"," STRING E_STRING|
+||epsilon|
+|STRING_EXPR| STRING E_STRING_EXPR|
+||IDENTIFIER E_STRING_EXPR|
+|E_STRING_EXPR| "+" STRING E_STRING_EXPR|
+||"+" IDENTIFIER E_STRING_EXPR|
+||epsilon|
+|STMT|FN_STMT|
+||IF_STMT|
+||WHILE_STMT|
+||DOWHILE_STMT|
+||FOR_STMT|
+||LET_STMT|
+||ASSIGN_STMT|
+|BLOCK| STMT BLOCK|
+||epsilon|
+|FN_STMT|"fn" IDENTIFIER "{" BLOCK "}"|
+|IF_STMT|"if" COND "{" BLOCK "}" IF_STMT_EXT|
+|IF_STMT_EXT|"else if" COND "{" BLOCK "}" IF_STMT_EXT|
+||"else" "{" BLOCK "}"|
+|WHILE_STMT|"while" COND "{" BLOCK "}"|
+|DOWHILE_STMT|"do" "{" BLOCK "}" "while" COND|
+|FOR_STMT|"for" IDENTIFIER "in" RANGE "{" BLOCK "}"|
+|RANGE|BEGIN ".." END|
+|BEGIN|IDENTIFIER|
+||NUMBER|
+|END|IDENTIFIER|
+||NUMBER|
+|COND| BOOL_EXPR COND_EXT|
+||"not" COND|
+|COND_EXT| COND_OP BOOL_EXPR|
+|COND_OP|and|
+||or|
 
 # Example Codes
 **1.fl :**
 --------------------
 ```rust
 fn main() {
-    print("Hello World\n");
+    out("Hello World\n");
 }
 ```
 
@@ -105,16 +147,16 @@ fn main() {
 ```rust
 fn main() {
     let n;
-    scan(n);
+    in(n);
     if (n == 0) {
-      print("0\n");
+      out("0\n");
     } else if (n > 0) {
       for i in 1..(n + 1) {
-        print(i + "\n");
+        out(i + "\n");
       }
     } else {
       for i in -1..(n - 1) {
-        print(i + "\n");
+        out(i + "\n");
       }
     }
 }
@@ -123,41 +165,44 @@ fn main() {
 --------------------
 ```rust
 fn main() {
-    print("Hello World\n");
+  let n;
+	let numbers = [];
+	let i = 0;
+	while in("test.txt", n) {
+		numbers[i] = n;
+		i = i + 1;
+	}
+	for x in 0..i {
+		let xxs = x + 1;
+		let min = numbers[x];
+		for xx in xxs..i {
+			if numbers[xx]<min {
+				let temp = numbers[x];
+				numbers[x] = numbers[xx];
+				numbers[xx] = temp;
+			}
+		}
+	}
+	for x in 0..i {
+		out("output.txt", numbers[x]);
+	}
 }
 ```
 **4.fl :**
 --------------------
 ```rust
 fn main() {
-    print("Hello World\n");
-}
-```
-**5.fl :**
---------------------
-```rust
-fn main() {
-    print("Hello World\n");
-}
-```
-**6.fl :**
---------------------
-```rust
-fn main() {
-    print("Hello World\n");
-}
-```
-**7.fl :**
---------------------
-```rust
-fn main() {
-    print("Hello World\n");
-}
-```
-**8.fl :**
---------------------
-```rust
-fn main() {
-    print("Hello World\n");
+	let x;
+	in(x);
+	let p1 = 1;
+	let p2 = 1;
+	out(p1 + " ");
+	out(p2 + " ");
+	for i in 2..x {
+		let next = p1 + p2;
+		out(next + " ");
+		p1 = p2;
+		p2 = next;
+	}
 }
 ```
