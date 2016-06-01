@@ -10,7 +10,7 @@
 
 - [rust ^1.7.0](https://www.rust-lang.org/downloads.html)
 - [cargo ^0.8.0](http://doc.crates.io/)
-- file with extension **.fl**
+- file with extension _.fl_
 
 **Installation**
 ```bash
@@ -18,19 +18,18 @@ curl -sf https://raw.githubusercontent.com/brson/multirust/master/blastoff.sh | 
 multirust set-default stable
 multirust update
 ```
-
 **Build**
 ```bash
 $ cargo build lexer
 ```
-
 **Sample Run**
 ```bash
 $ cargo run <filename.fl>
-$ #_OR_
+```
+_OR_
+```bash
 $ ./lexer/src/main/lexer <filename.fl>
 ```
-
 **Test**
 ```bash
 $ cargo test
