@@ -1,0 +1,26 @@
+
+function Main ( ) {
+   X = 3
+   print "Hello World"
+   Y = 2 * 5 / 2
+   print Y
+   get X
+   print X
+   get "input.txt"
+   Y = Filebuf
+   print Y
+   
+   while ( X > 10 ) {
+    print X
+    X = X + 1
+    
+   }
+   
+   if ( X > 3 ) { 
+    print "NAY"
+   } else {
+    print "YEY"
+   }
+   X = 1
+   
+}
