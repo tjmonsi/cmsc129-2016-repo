@@ -6,7 +6,7 @@ function main(){
 	var dec2 = .1234;
 
 	/*
-		var temp = "changed!";
+		var temp = "ch\"anged!";
 		int = 4321;
 		print(temp);
 	*/

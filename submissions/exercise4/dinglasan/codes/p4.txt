@@ -1,0 +1,38 @@
+simula
+
+	numero num;
+	numero a = 1;
+	numero b = 1;
+	numero c = 1;
+	numero i = 1;
+
+	isulat("Pumasok ng isang bilang : ");
+	ikuha(num);
+
+	kung(parehas(num,1)):
+		isulat(num);
+	gnuk;
+
+	habang(masmaliit(i,num)):	
+
+		kung(parehas(i,1)):
+			isulat(i);
+			isulat("\s");
+		gnuk;	
+
+		kung(parehas(modyulo(i,2),0)):
+			b = c;
+		gnuk;
+
+		kung(hindeRehas(modyulo(i,2),0)):
+			a = c;
+		gnuk;
+
+		c = plas(a,b);
+		isulat(c);
+		isulat("\s");
+		i = plas(i,1);
+
+	gnabah;	
+
+tapos

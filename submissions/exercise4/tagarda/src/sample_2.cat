@@ -1,0 +1,24 @@
+create main () {
+meow "Input a number";
+make x;
+purr x;
+
+
+
+meowif ( x == 0 ){
+    meow 0;
+}
+meowif ( x > 0 ) {
+    make i = 1;
+    x = x + 1;
+    rollwhile ( i < x ) {
+        meow i;
+        i = i + 1;
+    }
+}
+
+meowif ( x < 0 ) {
+
+}
+
+}

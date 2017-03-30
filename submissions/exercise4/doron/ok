@@ -1,0 +1,20 @@
+print "Hello World!"
+int Y = 0
+dbl Z = 2.55
+str S = "This is a String"
+bool W = true
+
+if ( X == 0 ) {
+    print "Enter Input:"
+    get X
+    
+} else { 
+    if ( Z == 2.55 and Y != 0 ) {
+        Z = 2.22 + 3 - 2 + ( 2 / 25 )
+        
+        while ( Z != 0 or Z > 0 ) {
+            print "Hello"
+            in
+        }
+    }
+}

@@ -1,0 +1,5 @@
+create main () {
+
+	int x = 2.2 
+	miao "Hello World"
+}

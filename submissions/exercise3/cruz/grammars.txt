@@ -1,0 +1,116 @@
+Start | Main
+Main | Fn-def, Main'
+Main | "newline", Main
+Main | epsilon
+newline | \\n, newline
+newline | epsilon
+Code-Block | Statement, Code-Block
+Code-Block | newline, Code-Block
+Code-Block | epsilon
+Statement | epsilon
+Statement | epsilon
+Statement | epsilon
+Statement | epsilon
+Statement | epsilon
+Statement | epsilon
+Statement | epsilon
+
+
+
+
+	//Grammar for statements
+	gRules.push(new Rule("Statement", ["Var-dec", ";"]))
+	gRules.push(new Rule("Statement", ["Asg-Exp", ";"]))
+	gRules.push(new Rule("Statement", ["print-call", ";"]))
+	gRules.push(new Rule("Statement", ["load-call", ";"]))
+	gRules.push(new Rule("Statement", ["Wh-loop"]))
+	gRules.push(new Rule("Statement", ["If"]))
+	gRules.push(new Rule("Statement", ["Return",";"]))
+
+	//Grammar for Variable Declaration
+	gRules.push(new Rule("Var-dec", ["var", "Var-dec'"]));
+	gRules.push(new Rule("Var-dec'", ["identifier", "Var-dec''"]));
+	gRules.push(new Rule("Var-dec''", ["epsilon"]));
+	gRules.push(new Rule("Var-dec''", ["=","Expression"]));
+	
+	//Grammar for Function Definition
+	gRules.push(new Rule("Fn-def", ["function", "identifier", "(", "Fn-Param", ")", "{", "Code-Block", "}"]));
+	
+	//Grammar for Function params
+	gRules.push(new Rule("Fn-Param", ["Expression", "Fn-Param'"]));
+	gRules.push(new Rule("Fn-Param", ["epsilon"]));
+	gRules.push(new Rule("Fn-Param'", [",","Fn-Param''"]));
+	gRules.push(new Rule("Fn-Param''", ["Expression","Fn-Param'"]));
+	gRules.push(new Rule("Fn-Param'", ["epsilon"]));
+
+	//Grammar for Assignment expression and Function call fix
+	gRules.push(new Rule("Asg-Exp", ["identifier", "Asg-Exp'"]));
+	gRules.push(new Rule("Asg-Exp'", ["=", "Expression"]));
+	gRules.push(new Rule("Asg-Exp'", ["Fn-call'"]));
+	
+	//Grammar for print call, load call, and custom-made function calls
+	gRules.push(new Rule("print-call", ["print","Fn-call'"]));
+	gRules.push(new Rule("load-call", ["load","Fn-call'"]));
+	gRules.push(new Rule("Fn-call", ["identifier","Fn-call'"]));
+	gRules.push(new Rule("Fn-call'", ["(", "Fn-Param", ")"]));
+	
+	//Grammar for Loops
+	gRules.push(new Rule("Wh-loop", ["while","(","Expression",")","{","Code-Block","}"]));
+
+	//Grammar for if/-else
+	gRules.push(new Rule("If", ["if", "(", "Expression", ")", "{", "Code-Block", "}", "If'"]));
+	gRules.push(new Rule("If'", ["newline", "else", "Else"]));
+	gRules.push(new Rule("If'", ["newline", "else", "Else"]));
+	gRules.push(new Rule("If'", ["else", "Else"]));
+	gRules.push(new Rule("Else", ["epsilon"]));
+	gRules.push(new Rule("Else", ["{", "Code-Block", "}"]));
+
+	//Grammar for Mathematical Expression
+	gRules.push(new Rule("Math-Exp", ["Term", "Math-Exp'"]));
+	gRules.push(new Rule("Math-Exp'", ["+", "Math-Exp"]));
+	gRules.push(new Rule("Math-Exp'", ["-", "Math-Exp"]));
+	gRules.push(new Rule("Math-Exp'", ["epsilon"]));
+	gRules.push(new Rule("Term", ["Factor", "Term'"]));
+	gRules.push(new Rule("Term'", ["%", "Term"]));
+	gRules.push(new Rule("Term'", ["*", "Term"]));
+	gRules.push(new Rule("Term'", ["/", "Term"]));
+	gRules.push(new Rule("Term'", ["epsilon"]));
+	gRules.push(new Rule("Factor", ["identifier", "ID-Exp"]));
+	gRules.push(new Rule("Factor", ["Number"]));
+	gRules.push(new Rule("Factor", ["(","Math-Exp",")"]));
+
+	//Grammar for Boolean Expression
+	gRules.push(new Rule("Bool'", ["<", "Expression"]));
+	gRules.push(new Rule("Bool'", [">", "Expression"]));
+	gRules.push(new Rule("Bool'", ["<=", "Expression"]));
+	gRules.push(new Rule("Bool'", [">=", "Expression"]));
+	gRules.push(new Rule("Bool'", ["==", "Expression"]));
+	gRules.push(new Rule("Bool'", ["!=", "Expression"]));
+	
+	//Grammar for arrays
+	gRules.push(new Rule("Array", ["[","Expression","]","Array'"]));
+	gRules.push(new Rule("Array'", ["[","Expression","]","Array'"]));
+	gRules.push(new Rule("Array'", ["epsilon"]));
+
+	//Grammar for General Expression (Disseminates Expression into its known domain)
+	gRules.push(new Rule("Expression", ["(","Expression",")"]));
+	gRules.push(new Rule("Expression", ["print-call"]));
+	gRules.push(new Rule("Expression", ["load-call"]));
+	gRules.push(new Rule("Expression", ["identifier", "ID-Exp"]));
+	gRules.push(new Rule("Expression", ["string", "Expression'"]));
+	gRules.push(new Rule("Expression", ["Number", "Num-Exp"]));
+	gRules.push(new Rule("Expression'", ["epsilon"]));
+	gRules.push(new Rule("ID-Exp", ["Array","Num-Exp"]));	//For Arrays
+	gRules.push(new Rule("ID-Exp", ["Fn-call'","Num-Exp"]));	//For function calls
+	gRules.push(new Rule("ID-Exp", ["Num-Exp"]));
+	gRules.push(new Rule("ID-Exp", ["epsilon"]));
+	gRules.push(new Rule("Num-Exp", ["Bool'"]));
+	gRules.push(new Rule("Num-Exp", ["Math-Exp'"]));
+	gRules.push(new Rule("Num-Exp", ["Term'"]));
+	gRules.push(new Rule("Num-Exp", ["epsilon"]));	
+	gRules.push(new Rule("Number",["number"]))
+	gRules.push(new Rule("Number",["-","number"]))
+
+	//Grammar for Return Statement
+	gRules.push(new Rule("Return", ["return", "Expression"]));	
+

@@ -1,0 +1,7 @@
+simula;
+	isulat("Hello World!");
+	isulat("Hello Ulit!");
+	isulat("Kumusta");
+	karakter c[30];
+	ikuha(c);
+tapos;

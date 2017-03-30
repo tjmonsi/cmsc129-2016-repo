@@ -2,6 +2,13 @@
 //http://stackoverflow.com/questions/4351521/how-do-i-pass-command-line-arguments-to-node-js
 //https://nodejs.org/docs/latest/api/fs.html
 
+/*[Rev 1]
+	Fixed '"' and "'" ambiguity; 
+	Supports escape character '\';
+	Added "if", "else", "continue" and "break"
+	Can determine type during token analysis
+*/
+
 /*
 	Content Tree:
 	Classes
@@ -55,7 +62,9 @@
 	var fs = require("fs");					//File System (file read/write)
 	var EOF = String.fromCharCode(22);		//Added character to EOF
 	var sStart = new State(null, false)		//Starting Universal FA State
-
+	var finout = []							//the final output;
+	var isloaded = false;					//this is loaded by syn.js
+	var failed = false;
 //--]
 //---]
 
@@ -130,31 +139,124 @@ function compile(){
 	}
 
 	//String generation (gathers "[<words>,<numbers>,<symbols>]")
-	var cstring = new State(null,false);
+	var cstring = new State("\"",false);
+	var cstring2 = new State("\'",false);
+
+	var esc1 = new State("\\",false);
+	var escnext = new State(null, false);
+	var esc2 = new State("\\",false);
+	var escnext2 = new State(null, false);
+
 	sStart.next["\'"].accept = false;
 	sStart.next["\""].accept = false; 
+	cstring.next["\'"] = new State("\'",false);
+	cstring2.next["\""] = new State("\"",false);
+	cstring.next["\""] = new State("\"",true);
+	cstring2.next["\'"] = new State("\'",true);
+	cstring2.next["\""] = new State("\"",false);
+	
+	sStart.next["\""] = cstring;
+	sStart.next["\'"] = cstring2;
+	sStart.next["\""].addNext(cstring.next["\'"]);
+	sStart.next["\'"].addNext(cstring2.next["\""]);
+	cstring.next["\'"].addNext(cstring.next["\'"]);
+	cstring.next["\'"].addNext(cstring.next["\""]);
+	cstring2.next["\""].addNext(cstring2.next["\'"]);
+	cstring2.next["\""].addNext(cstring2.next["\""]);
+
+	escnext.next["\\"] = new State("\\",false);
+	escnext.next["\""] = new State("\"",false);
+	escnext.next["\'"] = new State("\'",false);
+	escnext2.next["\\"] = new State("\\",false);
+	escnext2.next["\""] = new State("\"",false);
+	escnext2.next["\'"] = new State("\'",false);
+
 	for (var i = 32; i <= 126; i++) {
-		if(i == 34 || i == 39)
+		if(i == 34 || i == 39 || i == 92)
 			continue;
 		cstring.next[String.fromCharCode(i)] = new State(String.fromCharCode(i),false);
+		cstring2.next[String.fromCharCode(i)] = new State(String.fromCharCode(i),false);
 		sStart.next["\""].addNext(cstring.next[String.fromCharCode(i)]);
-		sStart.next["\'"].addNext(cstring.next[String.fromCharCode(i)]);
+		sStart.next["\'"].addNext(cstring2.next[String.fromCharCode(i)]);
 		cstring.next[String.fromCharCode(i)].addNext(new State("\"",true));
-		cstring.next[String.fromCharCode(i)].addNext(new State("\'",true));
+		cstring.next[String.fromCharCode(i)].addNext(cstring.next["\'"]);
+		cstring.next["\'"].addNext(String.fromCharCode(i));
+		cstring2.next[String.fromCharCode(i)].addNext(new State("\'",true));
+		cstring2.next[String.fromCharCode(i)].addNext(cstring2.next["\""]);
+		cstring2.next["\""].addNext(String.fromCharCode(i));
+	
 	}
 	sStart.next["\""].addNext(new State("\"",true));
 	sStart.next["\'"].addNext(new State("\'",true));
-		
+
 	for (var i = 32; i <= 126; i++) {
-		if(i == 34 || i == 39)
+		if(i == 34 || i == 39 || i == 92)
 			continue;
+		
+		esc1.next[String.fromCharCode(i)] = new State(String.fromCharCode(i), false);
+		esc2.next[String.fromCharCode(i)] = new State(String.fromCharCode(i), false);
+		
+		cstring.next[String.fromCharCode(i)].addNext(esc1);
+		cstring2.next[String.fromCharCode(i)].addNext(esc2);
+		cstring.next["\'"].addNext(cstring.next[String.fromCharCode(i)]);	
+		cstring2.next["\""].addNext(cstring.next[String.fromCharCode(i)]);	
+		escnext.next[String.fromCharCode(i)] = new State(String.fromCharCode(i), false);
+		escnext.next[String.fromCharCode(i)].next[String.fromCharCode(i)] = cstring.next[String.fromCharCode(i)];
+		escnext2.next[String.fromCharCode(i)] = new State(String.fromCharCode(i), false);
+		escnext2.next[String.fromCharCode(i)].next[String.fromCharCode(i)] = cstring2.next[String.fromCharCode(i)];
+		
 		for (var j = 32; j <= 126; j++) {
-			if(j == 34 || j == 39)
+			if(j == 34 || j == 39 || j == 92)
 				continue;
+			esc1.next[String.fromCharCode(i)].next[String.fromCharCode(j)] = cstring.next[String.fromCharCode(j)];
+			esc2.next[String.fromCharCode(i)].next[String.fromCharCode(j)] = cstring2.next[String.fromCharCode(j)];
+			
 			cstring.next[String.fromCharCode(i)].addNext(cstring.next[String.fromCharCode(j)]);
+			cstring2.next[String.fromCharCode(i)].addNext(cstring2.next[String.fromCharCode(j)]);
 		}
+		
+		escnext.next["\\"].next[String.fromCharCode(i)] = cstring.next[String.fromCharCode(i)];
+		escnext.next["\""].next[String.fromCharCode(i)] = cstring.next[String.fromCharCode(i)];
+		escnext.next["\'"].next[String.fromCharCode(i)] = cstring.next[String.fromCharCode(i)];
+		escnext2.next["\\"].next[String.fromCharCode(i)] = cstring2.next[String.fromCharCode(i)];
+		escnext2.next["\""].next[String.fromCharCode(i)] = cstring2.next[String.fromCharCode(i)];
+		escnext2.next["\'"].next[String.fromCharCode(i)] = cstring2.next[String.fromCharCode(i)];
+		
 	}
+
+	esc1.next["\\"] = escnext.next["\\"]; 
+	esc1.next["\""] = escnext.next["\""]; 
+	esc1.next["\'"] = escnext.next["\'"];
+	esc2.next["\\"] = escnext2.next["\\"]; 
+	esc2.next["\""] = escnext2.next["\""]; 
+	esc2.next["\'"] = escnext2.next["\'"]; 
+
+	escnext.next["\\"].next["\\"] = cstring.next["\\"];
+	escnext.next["\\"].next["\""] = cstring.next["\""];
+	escnext.next["\\"].next["\'"] = cstring.next["\'"];
+	escnext.next["\""].next["\\"] = cstring.next["\\"];
+	escnext.next["\""].next["\""] = cstring.next["\""];
+	escnext.next["\""].next["\'"] = cstring.next["\'"];
+	escnext.next["\'"].next["\\"] = cstring.next["\\"];
+	escnext.next["\'"].next["\""] = cstring.next["\""];
+	escnext.next["\'"].next["\'"] = cstring.next["\'"];
+
+	escnext2.next["\\"].next["\\"] = cstring2.next["\\"];
+	escnext2.next["\\"].next["\""] = cstring2.next["\""];
+	escnext2.next["\\"].next["\'"] = cstring2.next["\'"];
+	escnext2.next["\""].next["\\"] = cstring2.next["\\"];
+	escnext2.next["\""].next["\""] = cstring2.next["\""];
+	escnext2.next["\""].next["\'"] = cstring2.next["\'"];
+	escnext2.next["\'"].next["\\"] = cstring2.next["\\"];
+	escnext2.next["\'"].next["\""] = cstring2.next["\""];
+	escnext2.next["\'"].next["\'"] = cstring2.next["\'"];
 	
+	cstring.next["\\"] = esc1;
+	cstring2.next["\\"] = esc2;
+
+	escnext.next["\\"] = esc1;
+	escnext2.next["\\"] = esc2;
+
 	//Keywords
 	newKeyWord("true");
 	newKeyWord("false");
@@ -163,10 +265,14 @@ function compile(){
 	newKeyWord("print");
 	newKeyWord("load");
 	newKeyWord("return");
+	newKeyWord("if");
+	newKeyWord("else");
 	newKeyWord("for");
 	newKeyWord("do");
 	newKeyWord("while");
 	newKeyWord("null");
+	newKeyWord("continue");
+	newKeyWord("break");
 
 	//Others
 	newKeyWord("==");
@@ -182,7 +288,6 @@ function compile(){
 	newKeyWord("\r\n");
 	newKeyWord("\n");
 
-	console.log(sStart.next["\""])
 
 }
 
@@ -275,6 +380,7 @@ function analyze(text,filename){
 
 }
 
+
 //This is the main function
 //checks for arguments
 //reads file
@@ -301,11 +407,10 @@ function main(){
 	  	var output = "";
 	  	while(tokens.length > 0){
 	  		var token = tokens.shift();
-		  	var isNotNewLine = (token!="\r\n"&&token!="\n"&&token!="\r");
-	  		var isNotSpace = (token!=" ");
-	  		var isNotTab = (token!="\t");
-	  		var isUnknown = token=="unknown";
-	  		var nextline = (isNotNewLine?(isNotSpace?(isNotTab?(isUnknown?"unknown":token):"\\t"):"\\s"):"\\n") + "\n";
+		  	var isNotNewLine = (token["token"]!="\r\n"&&token["token"]!="\n"&&token["token"]!="\r");
+	  		var isNotSpace = (token["token"]!=" ");
+	  		var isNotTab = (token["token"]!="\t");
+	  		var nextline = (isNotNewLine?(isNotSpace?(isNotTab?(token["token"] + IS + token["type"]):("\\t"+IS+"\\s")):("\\s"+IS+"\\s")):("\\n"+IS+"\\n")) + "\n";
 	  		output+=nextline;
 	  	}
 	  	console.log(output+"----------\n");

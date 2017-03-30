@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include "syn.h"
+#define CHILD 10
+#define LEN 10
+
+enum bool{
+	false,
+	true
+};
+
+enum form{
+	terminal,
+	non_term
+};
+
+typedef struct tree{
+	int id;
+	char name[LEN];
+	enum form type;
+	struct tree *parent;
+	struct tree *next;
+	struct tree *child[CHILD];
+}node;
+
+char token[LEN];
+FILE *fp;
+
+void getToken(){
+
+}
+
+
+void CODE(){
+	getToken();
+
+}
+
+void main(){
+
+	fp = fopen("token.tk", "r");
+
+}

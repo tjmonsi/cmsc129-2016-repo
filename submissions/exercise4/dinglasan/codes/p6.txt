@@ -1,0 +1,34 @@
+simula
+	numero MAX = 20;
+	numero i;
+	numero j;
+	numero len;
+	numero flag = 0;
+
+	karakter c[MAX];
+	ikuha(c);
+	
+	len = 0;
+	habang(masmalaki(c[len],0)):
+		len = plas(len,1);
+	gnabah;
+
+	i = 0;
+	j = maynus(len,1);
+	habang(masmaliit(i,j)):
+		kung(hindeRehas(c[i],c[j])):
+			flag = 1;
+		gnuk;
+		i = plas(i,1);
+		j = maynus(j,1);
+	gnabah;
+
+	kung(parehas(flag, 0)):
+		isulat("true \n");
+	gnuk;
+
+	kung(parehas(flag, 1)):
+		isulat("false \n");
+	gnuk;
+
+tapos

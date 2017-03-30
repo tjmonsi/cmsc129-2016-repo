@@ -1,0 +1,43 @@
+S
+	L Var-dec
+		L var  =>  var
+		L Var-dec'
+			L identifier  =>  x
+			L Var-dec''
+				L =  =>  =
+				L Expression
+					L number  =>  2
+					L Math-Exp'
+						L +  =>  +
+						L Math-Exp
+							L Term
+								L Factor
+									L identifier  =>  y
+								L Term'
+									L /  =>  /
+									L Term
+										L Factor
+											L (  =>  (
+											L Math-Exp
+												L Term
+													L Factor
+														L identifier  =>  z
+													L Term'  =>  epsilon
+												L Math-Exp'
+													L +  =>  +
+													L Math-Exp
+														L Term
+															L Factor
+																L number  =>  25
+															L Term'  =>  epsilon
+														L Math-Exp'  =>  epsilon
+											L )  =>  )
+										L Term'  =>  epsilon
+							L Math-Exp'
+								L +  =>  +
+								L Math-Exp
+									L Term
+										L Factor
+											L number  =>  15
+										L Term'
+									L Math-Exp'
