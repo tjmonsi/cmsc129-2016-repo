@@ -1,0 +1,29 @@
+var file;
+var nums = [];
+var count;
+
+open("numbers.txt", "r", file);
+count = int(readline(file));
+for(var i = 0; i < count; i++) {
+    append(nums, int(readline(file)));
+}
+
+var temp;
+
+for(var i = 0; i < count; i++) {
+    for(var j = 0; j < count; j++) {
+        if(nums[j] > nums[i]) {
+            temp = nums[j];
+            nums[j] = nums[i];
+            nums[i] = temp;
+        }
+    }
+}
+
+output(nums);
+
+var out;
+open("output.txt", "w", out);
+for(var i = 0; i < count; i++) {
+    writeline(out, nums[i]);
+}

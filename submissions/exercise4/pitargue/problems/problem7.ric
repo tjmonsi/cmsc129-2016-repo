@@ -1,0 +1,5 @@
+var file;
+open("instructions.txt", "w", file);
+var instructions =
+    "INSTRUCTIONS FOR USE\nSave your file with any extension you want and simply run 'python main.py <your_filename>'";
+writeline(file, instructions);

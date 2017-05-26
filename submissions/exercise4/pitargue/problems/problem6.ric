@@ -1,0 +1,14 @@
+
+var string;
+input(string, "Enter a string: ");
+
+var half = len(string)/2;
+
+for(var i = 0; i < half; i++) {
+    if(string[i] != string[n-i-1]) {
+        output("not a palindrome!");
+        break;
+    }
+}
+
+output("a palindrome!");
