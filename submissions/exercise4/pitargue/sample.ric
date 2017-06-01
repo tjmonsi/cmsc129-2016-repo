@@ -1,0 +1,8 @@
+var nums = [];
+var sum = 0;
+var sumNeg = 0;
+for(var i = 0; i < 50; i++) {
+    append(nums, rand(-10000, 10000));
+    output(nums[i]);
+    sum = sum + nums[i];
+}

@@ -1,0 +1,16 @@
+var num;
+input(num, "Input number: ");
+
+if(num == 0) {
+    output(0);
+}
+
+if(num > 0) {
+    for(var i = 1; i <= num; i++) {
+        output(i);
+    }
+} else {
+    for(var i = -1; i >= num; i--) {
+        output(i);
+    }
+}

@@ -1,0 +1,27 @@
+var nums = [];
+var sum = 0;
+var sumNeg = 0;
+for(var i = 0; i < 50; i++) {
+    append(nums, rand(-1000, 1000));
+    output(nums[i]);
+    sum = sum + nums[i];
+}
+
+output("SUM");
+output(sum);
+
+var average = sum / 50;
+
+output("AVERAGE");
+output(average);
+
+var sd = 0;
+
+for(var i = 0; i < 50; i++) {
+    sd = sd + (nums[i]-average*nums[i]-average);
+}
+
+sd = sqrt(sd/50);
+
+output("STANDARD DEVIATION");
+output(sd);

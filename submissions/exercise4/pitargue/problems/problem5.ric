@@ -1,0 +1,50 @@
+var count;
+var nums = [];
+var descending = [];
+var temp;
+input(count, "Enter number between 1-20: ");
+for(var i = 0; i < count; i++) {
+    input(temp, "Enter a number: ");
+    append(nums, temp);
+    append(descending, temp);
+}
+
+for(var i = 0; i < count; i++) {
+    for(var j = 0; j < count; j++) {
+        if(nums[j] > nums[i]) {
+            temp = nums[j];
+            nums[j] = nums[i];
+            nums[i] = temp;
+        }
+    }
+}
+
+for(var i = 0; i < count; i++) {
+    for(var j = 0; j < count; j++) {
+        if(descending[j] < descending[i]) {
+            temp = descending[j];
+            descending[j] = descending[i];
+            descending[i] = temp;
+        }
+    }
+}
+
+output("ASCENDING");
+for(var i = 0; i < count; i++) {
+    output(nums[i]);
+}
+
+output("DESCENDING");
+for(var i = 0; i < count; i++) {
+    output(descending[i]);
+}
+
+output("ASCENDING+DESCENDING");
+for(var i = 0; i < count; i++) {
+    output(nums[i]+descending[i]);
+}
+
+output("ASCENDING*DESCENDING");
+for(var i = 0; i < count; i++) {
+    output(nums[i]*descending[i]);
+}

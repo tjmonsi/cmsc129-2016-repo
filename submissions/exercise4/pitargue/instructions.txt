@@ -1,0 +1,1 @@
+INSTRUCTIONS FOR USE\nSave your file with any extension you want and simply run 'python main.py <your_filename>'
